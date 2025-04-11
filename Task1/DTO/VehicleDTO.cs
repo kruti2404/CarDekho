@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿
+using System.ComponentModel;
 
 namespace Task1.DTO
 {
@@ -17,4 +18,4 @@ namespace Task1.DTO
 
     }
 }
-    
+
