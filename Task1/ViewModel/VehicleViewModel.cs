@@ -12,7 +12,5 @@ namespace Task1.ViewModel
         public List<SelectListItem> CategoryList { get; set; } = new();
         public List<SelectListItem> PageSizeList { get; set; } = new();
         public IEnumerable<string> BrandList { get; set; } = new List<string>();
-
-
     }
 }

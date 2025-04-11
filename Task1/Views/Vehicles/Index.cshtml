@@ -152,7 +152,7 @@
 
 				</li>
 				<li class="page-item @(Model.Query.PageNumber == 1 ? "active" : "")">
-					<a class="page-link" asp-route-PageNumber="1"
+					<a class="page-link" asp-route-Query.PageNumber="1"
 					   asp-route-Query.PageSize="@Model.Query.PageSize"
 					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
 					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
@@ -163,7 +163,7 @@
 					</a>
 				</li>
 				<li class="page-item @(Model.Query.PageNumber == Model.TotalRecords ? "active" : "")">
-					<a class="page-link" asp-route-PageNumber="@Model.TotalRecords"
+					<a class="page-link" asp-route-Query.PageNumber="@Model.TotalRecords"
 					   asp-route-Query.PageSize="@Model.Query.PageSize"
 					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
 					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
@@ -174,13 +174,13 @@
 					</a>
 				</li>
 				<li class="page-item @(Model.Query.PageNumber >= Model.TotalRecords ? "disabled" : "")">
-					<a class="page-link" asp-route-PageNumber="@(Model.Query.PageNumber + 1)"
-					   asp-route-Query.PageSize="@Model.Query.PageSize"
-					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
-					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
+					<a class="page-link" asp-route-Query.PageNumber="@(Model.Query.PageNumber + 1)"
+					   asp-route-PageSize="@Model.Query.PageSize"
+					   asp-route-SearchTerm="@Model.Query.SearchTerm"
+					   asp-route-SingleFilter="@Model.Query.SingleFilter"
 					   asp-route-Query.Query.SingleFilter="@Model.Query.MultiFilter"
-					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
-					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
+					   asp-route-SortColumn="@Model.Query.SortColumn"
+					   asp-route-SortDirection="@Model.Query.SortDirection">
 						Next
 					</a>
 				</li>
