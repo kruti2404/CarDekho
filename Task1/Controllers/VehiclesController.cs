@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -51,7 +52,8 @@ namespace Task1.Controllers
             PageList.FirstOrDefault(p => p.Value == query.PageSize.ToString())!.Selected = true;
 
 
-
+            Console.WriteLine("Sort Column is " + query.SortColumn);
+            Console.WriteLine("Sort Direction is " + query.SortDirection);
 
             var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "");
             int TotalRecords = result.TotalRecords;
