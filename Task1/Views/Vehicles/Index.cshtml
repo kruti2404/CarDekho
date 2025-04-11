@@ -1,0 +1,231 @@
+﻿	@model Task1.ViewModel.VehicleViewModel
+@{
+	ViewBag.Title = "Index";
+	var selectedValues = string.IsNullOrEmpty(Model.Query.MultiFilter as string)
+					? new List<string>()
+					: (Model.Query.MultiFilter as string).Split(',').ToList();
+
+}
+
+<div class="container py-5">
+	<h2 class="text-center mb-4">Vehicles</h2>
+
+	<!-- Filter Form -->
+	<form id="filterForm" asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
+		<input type="hidden" name="PageSize" value="@Model.Query.PageSize" />
+		<input type="hidden" name="PageNumber" value="@Model.Query.PageNumber" />
+		<input type="hidden" name="SearchTerm" value="@Model.Query.SearchTerm" />
+
+		<div class="d-flex gap-3 align-items-center flex-wrap">
+
+			@Html.DropDownListFor(model => model.Query.SingleFilter, Model.CategoryList, new { @class = "form-select form-select-sm w-auto" })
+
+			<select id="MultiSelectFilter" multiple class="form-control" style="width:20%">
+
+
+				@foreach (var item in Model.BrandList as IEnumerable<string>)
+				{
+					var isSelected = selectedValues.Contains(item);
+					<option value="@item">@item</option>
+				}
+
+			</select>
+
+			<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
+
+			<button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
+		</div>
+	</form>
+
+	<!-- Range Slider  -->
+	<form>
+	</form>
+	<!-- Search Form -->
+	<form asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
+		<div class="input-group w-50 mx-auto">
+			<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
+			<input type="hidden" name="Query.PageNumber" value="@Model.Query.PageNumber" />
+			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
+			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
+			<input type="text" class="form-control" placeholder="Search..." name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
+			<button class="btn btn-outline-secondary" type="submit">
+				<i class="bi bi-search"></i>
+			</button>
+		</div>
+
+	</form>
+
+	<!-- Vehicles Table -->
+	<div class="table-responsive">
+		<table class="table table-bordered table-hover align-middle text-center">
+			<thead class="table-primary">
+				<tr>
+
+					@foreach (var column in new[] { "Name", "ModelYear", "Price", "Rating" })
+					{
+						<th class="text-start" style="width: 5%">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<span>@column</span>
+								<a class="btn btn-sm p-0 border-0 bg-transparent"
+								   asp-route-PageNumber="@Model.Query.PageNumber"
+								   asp-route-PageSize="@Model.Query.PageSize"
+								   asp-route-SearchTerm="@Model.Query.SearchTerm"
+								   asp-route-SingleFilter="@Model.Query.SingleFilter"
+								   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
+								   asp-route-SortColumn="@Model.Query.SortColumn"
+								   asp-route-SortDirection="@(Model.Query.SortDirection == "ASC" ? "DESC" : "ASC")">
+									<i class="bi @(Model.Query.SortDirection == "ASC" ? "bi-sort-up" : "bi-sort-down")"></i>
+								</a>
+							</div>
+						</th>
+					}
+					<th class="text-center">Description</th>
+					<th class="text-center">Category</th>
+					<th class="text-center">Brand</th>
+					<th class="text-center">Action</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@if (Model.Vehicles.Any())
+				{
+					foreach (var vehicle in Model.Vehicles)
+					{
+						<tr>
+							<td>@vehicle.Name</td>
+							<td>@vehicle.ModelYear</td>
+							<td>₹@Math.Floor(vehicle.Price)</td>
+							<td>
+								@for (int i = 1; i <= 5; i++)
+								{
+									if (i <= vehicle.Rating)
+									{
+										<span class="text-warning">&#9733;</span>
+									}
+									else
+									{
+										<span class="text-muted">&#9734;</span>
+									}
+								}
+							</td>
+							<td class="text-start">@vehicle.Description</td>
+							<td>@vehicle.CategoryName</td>
+							<td>@vehicle.BrandName</td>
+							<td>
+								<a href="#" class="text-primary me-2" title="Details">
+									<i class="bi bi-list"></i>
+								</a>
+								<a href="#" class="text-danger" title="Delete">
+									<i class="bi bi-trash3-fill"></i>
+								</a>
+							</td>
+						</tr>
+					}
+				}
+				else
+				{
+					<tr>
+						<td colspan="8" class="text-muted text-center">No results found.</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<!-- Pagination + Page Size -->
+	<div class="d-flex justify-content-between align-items-end mt-4 flex-wrap gap-3">
+		<nav>
+			<ul class="pagination pagination-sm mb-0">
+				<li class="page-item @(Model.Query.PageNumber <= 1 ? "disabled" : "")">
+					<a class="page-link"
+					   href="@Url.Action("Index", new {
+							   PageNumber = Model.Query.PageNumber - 1,
+							   PageSize = Model.Query.PageSize,
+							   SearchTerm = Model.Query.SearchTerm,
+							   SingleFilter = Model.Query.SingleFilter,
+							   MultiFilter = Model.Query.MultiFilter,
+							   SortColumn = Model.Query.SortColumn,
+							   SortDirection = Model.Query.SortDirection
+						   })">
+						Previous
+					</a>
+
+				</li>
+				<li class="page-item @(Model.Query.PageNumber == 1 ? "active" : "")">
+					<a class="page-link" asp-route-PageNumber="1"
+					   asp-route-PageSize="@Model.Query.PageSize"
+					   asp-route-SearchTerm="@Model.Query.SearchTerm"
+					   asp-route-SingleFilter="@Model.Query.SingleFilter"
+					   asp-route-Query.SingleFilter="@Model.Query.MultiFilter"
+					   asp-route-SortColumn="@Model.Query.SortColumn"
+					   asp-route-SortDirection="@Model.Query.SortDirection">
+						First
+					</a>
+				</li>
+				<li class="page-item @(Model.Query.PageNumber == Model.TotalRecords ? "active" : "")">
+					<a class="page-link" asp-route-PageNumber="@Model.TotalRecords"
+					   asp-route-PageSize="@Model.Query.PageSize"
+					   asp-route-SearchTerm="@Model.Query.SearchTerm"
+					   asp-route-SingleFilter="@Model.Query.SingleFilter"
+					   asp-route-Query.SingleFilter="@Model.Query.MultiFilter"
+					   asp-route-SortColumn="@Model.Query.SortColumn"
+					   asp-route-SortDirection="@Model.Query.SortDirection">
+						Last
+					</a>
+				</li>
+				<li class="page-item @(Model.Query.PageNumber >= Model.TotalRecords ? "disabled" : "")">
+					<a class="page-link" asp-route-PageNumber="@(Model.Query.PageNumber + 1)"
+					   asp-route-PageSize="@Model.Query.PageSize"
+					   asp-route-SearchTerm="@Model.Query.SearchTerm"
+					   asp-route-SingleFilter="@Model.Query.SingleFilter"
+					   asp-route-Query.Query.SingleFilter="@Model.Query.MultiFilter"
+					   asp-route-SortColumn="@Model.Query.SortColumn"
+					   asp-route-SortDirection="@Model.Query.SortDirection">
+						Next
+					</a>
+				</li>
+			</ul>
+		</nav>
+
+		<form method="get" class="d-flex align-items-center">
+			<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
+			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
+			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
+
+			<label class="me-2 mb-0">Page Size:</label>
+			@Html.DropDownList("Query.PageSize", (List<SelectListItem>)Model.PageSizeList,
+							new { @class = "form-select form-select-sm w-auto me-2", onchange = "this.form.submit();" })
+
+
+		</form>
+	</div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Add Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Add Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<script>
+
+	const selected = "@Html.Raw(Model.Query.MultiFilter)";
+	if (selected) {
+		const values = selected.split(",");
+		$("#MultiSelectFilter").val(values).trigger("change");
+	}
+
+	$("#MultiSelectFilter").select2({
+		placeholder: "Select Brands",
+		allowClear: true
+	});
+
+
+	$("#filterForm").on("submit", function () {
+		var selectedBrands = $("#MultiSelectFilter").val();
+		$("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
+	});
+
+</script>
