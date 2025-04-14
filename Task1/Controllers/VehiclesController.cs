@@ -22,6 +22,8 @@ namespace Task1.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(QueryDTO query)
         {
+
+            Console.WriteLine("Availability is " + query.StockAvail);
             Console.WriteLine("MinPrice is " + query.MinPrice);
             Console.WriteLine("MaxPrice is " + query.MaxPrice);
             IEnumerable<Brands> brands = await _UOFInstance._brandsRepository.GetAll();
@@ -39,7 +41,6 @@ namespace Task1.Controllers
                 Text = "-- Select Category --",
                 Selected = string.IsNullOrEmpty(query.SingleFilter)
             });
-
 
             var PageList = new List<SelectListItem>
                 {
@@ -61,7 +62,7 @@ namespace Task1.Controllers
                 query.MaxPrice = 200000;
 
             }
-            var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice);
+            var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice, query.StockAvail.ToString() ?? "All");
             int TotalRecords = result.TotalRecords;
 
             var TotalPages = (int)Math.Ceiling((double)TotalRecords / query.PageSize);
@@ -75,15 +76,13 @@ namespace Task1.Controllers
                 BrandList = brands.Select(b => b.Name),
                 PageSizeList = PageList
             };
-            foreach (var item in result.Vehicles)
+            foreach (var item in viewModel.Vehicles)
             {
                 Console.WriteLine(item.Quantity);
             }
 
             ViewBag.SelectedValues = viewModel.Query.MultiFilter;
-
             return View(viewModel);
-
 
         }
 
