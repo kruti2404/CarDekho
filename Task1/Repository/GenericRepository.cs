@@ -30,7 +30,7 @@ namespace Task1.Repository
             return await _table.ToListAsync();
         }
 
-        public async Task<VehicleViewModel> GetAll(int PageSize, int PageNumber, string SearchTerm, string SortColumn, string SortDirection, string SingleFiltter, string MultiFiltter)
+        public async Task<VehicleViewModel> GetAll(int PageSize, int PageNumber, string SearchTerm, string SortColumn, string SortDirection, string SingleFiltter, string MultiFiltter, int MinPrice, int MaxPrice)
         {
 
             SqlParameter TotalRecordsParam = new SqlParameter("@TotalRecords", SqlDbType.Int)
@@ -42,7 +42,7 @@ namespace Task1.Repository
             };
 
 
-            var result = await _context.Database.SqlQueryRaw<VehicleDTO>("Exec SearchVehicles @PageSize, @PageNumber, @SearchTerm, @SortColumn, @SortDirection, @SingleFiltter, @MultiFiltter, @TotalRecords OUTPUT",
+            var result = await _context.Database.SqlQueryRaw<VehicleDTO>("Exec SearchVehicles @PageSize, @PageNumber, @SearchTerm, @SortColumn, @SortDirection, @SingleFiltter, @MultiFiltter, @MinPrice, @MaxPrice, @TotalRecords OUTPUT",
                                                                          new SqlParameter("@PageSize", PageSize),
                                                                          new SqlParameter("@PageNumber", PageNumber),
                                                                          new SqlParameter("@SearchTerm", SearchTerm),
@@ -50,6 +50,9 @@ namespace Task1.Repository
                                                                          new SqlParameter("@SortDirection", SortDirection),
                                                                          new SqlParameter("@SingleFiltter", SingleFiltter),
                                                                          new SqlParameter("@MultiFiltter", MultiFiltter),
+                                                                         new SqlParameter("@MinPrice", MinPrice),
+                                                                         new SqlParameter("@MaxPrice", MaxPrice),
+
                                                                          TotalRecordsParam).ToListAsync();
 
 

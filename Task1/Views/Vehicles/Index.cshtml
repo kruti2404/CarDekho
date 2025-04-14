@@ -7,7 +7,7 @@
 
 }
 
-<div class="container py-5">
+<div class="container ">
 	<h2 class="text-center mb-4">Vehicles</h2>
 
 	<!-- Filter Form -->
@@ -15,7 +15,6 @@
 		<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
 		<input type="hidden" name="Query.PageNumber" value="@Model.Query.PageNumber" />
 		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
-
 		<div class="d-flex gap-3 align-items-center flex-wrap">
 
 			@Html.DropDownListFor(model => model.Query.SingleFilter, Model.CategoryList, new { @class = "form-select form-select-sm w-auto" })
@@ -32,13 +31,48 @@
 			</select>
 
 			<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
+			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
+			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
+
+
 
 			<button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
 		</div>
 	</form>
 
 	<!-- Range Slider  -->
-	<form>
+	<form asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
+		<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
+		<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
+		<input type="hidden" name="Query.PageNumber" value="@Model.Query.PageNumber" />
+		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
+		<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
+		<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
+		<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
+
+		<div class="wrapper my-4">
+			<div class="container">
+
+				<div class="slider-wrapper d-flex gap-3 align-items-center flex-wrap ">
+					<div id="slider-range" style="width:80%"></div>
+					<div class="range mx-3"></div>
+
+					<div class="range-wrapper">
+
+						<span>
+
+						</span>
+
+
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
+
 	</form>
 	<!-- Search Form -->
 	<form asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
@@ -47,6 +81,9 @@
 			<input type="hidden" name="Query.PageNumber" value="@Model.Query.PageNumber" />
 			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
 			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
+			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
+			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
+
 			<input type="text" class="form-control" placeholder="Search..." name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
 			<button class="btn btn-outline-secondary" type="submit">
 				<i class="bi bi-search"></i>
@@ -72,7 +109,9 @@
 								   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
 								   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
 								   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
-								   asp-route-Query.SortColumn="@Model.Query.SortColumn"
+								   asp-route-Query.MinPrice="@Model.Query.MinPrice"
+								   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
+								   asp-route-Query.SortColumn="@column"
 								   asp-route-Query.SortDirection="@(Model.Query.SortDirection == "ASC" ? "DESC" : "ASC")">
 									<i class="bi @(Model.Query.SortDirection == "ASC" ? "bi-sort-up" : "bi-sort-down")"></i>
 								</a>
@@ -137,26 +176,28 @@
 		<nav>
 			<ul class="pagination pagination-sm mb-0">
 				<li class="page-item @(Model.Query.PageNumber <= 1 ? "disabled" : "")">
-					<a class="page-link"
-					   href="@Url.Action("Index", new {
-							   PageNumber = Model.Query.PageNumber - 1,
-							   PageSize = Model.Query.PageSize,
-							   SearchTerm = Model.Query.SearchTerm,
-							   SingleFilter = Model.Query.SingleFilter,
-							   MultiFilter = Model.Query.MultiFilter,
-							   SortColumn = Model.Query.SortColumn,
-							   SortDirection = Model.Query.SortDirection
-						   })">
-						Previous
-					</a>
-
-				</li>
-				<li class="page-item @(Model.Query.PageNumber == 1 ? "active" : "")">
 					<a class="page-link" asp-route-Query.PageNumber="1"
 					   asp-route-Query.PageSize="@Model.Query.PageSize"
 					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
 					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-					   asp-route-Query.SingleFilter="@Model.Query.MultiFilter"
+					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
+					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
+					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
+					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
+					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
+					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
+						Previous
+					</a>
+				</li>
+				<li class="page-item @(Model.Query.PageNumber == 1 ? "active" : "")">
+					<a class="page-link" asp-route-Query.PageNumber="@(Model.Query.PageNumber - 1)"
+					   asp-route-Query.PageSize="@Model.Query.PageSize"
+					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
+					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
+					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
+					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
+					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
+					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
 					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
 						First
@@ -167,7 +208,10 @@
 					   asp-route-Query.PageSize="@Model.Query.PageSize"
 					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
 					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-					   asp-route-Query.SingleFilter="@Model.Query.MultiFilter"
+					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
+					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
+					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
+					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
 					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
 						Last
@@ -175,12 +219,14 @@
 				</li>
 				<li class="page-item @(Model.Query.PageNumber >= Model.TotalRecords ? "disabled" : "")">
 					<a class="page-link" asp-route-Query.PageNumber="@(Model.Query.PageNumber + 1)"
-					   asp-route-PageSize="@Model.Query.PageSize"
-					   asp-route-SearchTerm="@Model.Query.SearchTerm"
-					   asp-route-SingleFilter="@Model.Query.SingleFilter"
-					   asp-route-Query.Query.SingleFilter="@Model.Query.MultiFilter"
-					   asp-route-SortColumn="@Model.Query.SortColumn"
-					   asp-route-SortDirection="@Model.Query.SortDirection">
+					   asp-route-Query.PageSize="@Model.Query.PageSize"
+					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
+					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
+					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
+					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
+					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
+					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
+					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
 						Next
 					</a>
 				</li>
@@ -191,6 +237,9 @@
 			<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
 			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
 			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
+			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
+			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
+
 
 			<label class="me-2 mb-0">Page Size:</label>
 			@Html.DropDownList("Query.PageSize", (List<SelectListItem>)Model.PageSizeList,
@@ -202,30 +251,29 @@
 </div>
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Add Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-<!-- Add Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
 <script>
+	$(function () {
+		const selected = "@Html.Raw(Model.Query.MultiFilter)";
+		if (selected) {
+			const values = selected.split(",");
+			$("#MultiSelectFilter").val(values).trigger("change");
+		}
 
-	const selected = "@Html.Raw(Model.Query.MultiFilter)";
-	if (selected) {
-		const values = selected.split(",");
-		$("#MultiSelectFilter").val(values).trigger("change");
-	}
+		$("#MultiSelectFilter").select2({
+			placeholder: "Select Brands",
+			allowClear: true
+		});
 
-	$("#MultiSelectFilter").select2({
-		placeholder: "Select Brands",
-		allowClear: true
-	});
+		// Multi-select hidden value
+		$("#filterForm").on("submit", function () {
+			var selectedBrands = $("#MultiSelectFilter").val();
+			$("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
+
+			// Search text
+			$("#SearchTerm").val($("#SearchBox").val());
+		});
 
 
-	$("#filterForm").on("submit", function () {
-		var selectedBrands = $("#MultiSelectFilter").val();
-		$("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
 	});
 
 </script>

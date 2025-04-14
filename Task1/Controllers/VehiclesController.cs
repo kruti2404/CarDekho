@@ -20,10 +20,10 @@ namespace Task1.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(QueryDTO query, string MinPrice, string MaxPrice)
+        public async Task<IActionResult> Index(QueryDTO query)
         {
-            Console.WriteLine("MinPrice is " + MinPrice);
-            Console.WriteLine("MaxPrice is " + MaxPrice);
+            Console.WriteLine("MinPrice is " + query.MinPrice);
+            Console.WriteLine("MaxPrice is " + query.MaxPrice);
             IEnumerable<Brands> brands = await _UOFInstance._brandsRepository.GetAll();
             IEnumerable<Categories> categories = await _UOFInstance._categoriesRepository.GetAll();
 
@@ -55,7 +55,7 @@ namespace Task1.Controllers
             Console.WriteLine("Sort Column is " + query.SortColumn);
             Console.WriteLine("Sort Direction is " + query.SortDirection);
 
-            var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "");
+            var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice);
             int TotalRecords = result.TotalRecords;
 
             var TotalPages = (int)Math.Ceiling((double)TotalRecords / query.PageSize);
