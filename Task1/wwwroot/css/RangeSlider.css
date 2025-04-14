@@ -1,23 +1,4 @@
-﻿html {
-    box-sizing: border-box;
-}
-
-*, *:before, *:after {
-    box-sizing: inherit;
-}
-
-html,
-body {
-    height: 100%;
-    min-width: 500px;
-}
-
-body {
-    background: #e8e8e8;
-    -webkit-font-smoothing: antialiased;
-}
-
-sup {
+﻿sup {
     font-size: 80%;
     vertical-align: top;
     position: relative;

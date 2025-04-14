@@ -12,6 +12,8 @@
         public Brands Brands { get; set; }
         public int CategoryId { get; set; }
         public Categories Categories { get; set; }
+        public int StockId { get; set; }
+        public Stocks Stocks { get; set; }
 
     }
 }

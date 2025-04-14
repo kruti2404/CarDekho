@@ -71,14 +71,20 @@ namespace Task1.Data
                 .HasIndex(b => b.Name)
                 .IsUnique();
 
+            modelBuilder.Entity<Stocks>()
+                .HasKey(stk => stk.Id);
 
+            modelBuilder.Entity<Stocks>()
+                .HasOne(stk => stk.Vehicle)
+                .WithOne(vhc => vhc.Stocks)
+                .HasForeignKey<Stocks>(stk => stk.VehicleId);
 
         }
 
         DbSet<Vehicles> Vehicles { get; set; }
         DbSet<Brands> Brands { get; set; }
         DbSet<Categories> Categories { get; set; }
-
+        DbSet<Stocks> Stocks { get; set; }
 
     }
 }

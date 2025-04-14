@@ -54,7 +54,13 @@ namespace Task1.Controllers
 
             Console.WriteLine("Sort Column is " + query.SortColumn);
             Console.WriteLine("Sort Direction is " + query.SortDirection);
+            Console.WriteLine("Multi dropdown is " + query.MultiFilter);
+            if (query.MinPrice < 200000)
+            {
+                query.MinPrice = 200000;
+                query.MaxPrice = 200000;
 
+            }
             var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice);
             int TotalRecords = result.TotalRecords;
 
@@ -69,6 +75,10 @@ namespace Task1.Controllers
                 BrandList = brands.Select(b => b.Name),
                 PageSizeList = PageList
             };
+            foreach (var item in result.Vehicles)
+            {
+                Console.WriteLine(item.Quantity);
+            }
 
             ViewBag.SelectedValues = viewModel.Query.MultiFilter;
 
