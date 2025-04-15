@@ -30,7 +30,7 @@ namespace Task1.Repository
             return await _table.ToListAsync();
         }
 
-        public async Task<VehicleViewModel> GetAll(int PageSize, int PageNumber, string SearchTerm, string SortColumn, string SortDirection, string SingleFiltter, string MultiFiltter, int MinPrice, int MaxPrice, string StockAvail)
+        public async Task<VehicleViewModel> GetAll(int PageSize, int PageNumber, string SearchTerm, string SortColumn, string SortDirection, string SingleFiltter, string MultiFiltter, int MinPrice, int MaxPrice, string StockAvail, string ColoursSelected)
         {
             bool? StockAvailBool;
             if (StockAvail == "OutOfStock")
@@ -54,7 +54,7 @@ namespace Task1.Repository
             };
 
 
-            var result = await _context.Database.SqlQueryRaw<VehicleDTO>("Exec SearchVehicles @PageSize, @PageNumber, @SearchTerm, @SortColumn, @SortDirection, @SingleFiltter, @MultiFiltter, @MinPrice, @MaxPrice, @StockAvail, @TotalRecords OUTPUT",
+            var result = await _context.Database.SqlQueryRaw<VehicleDTO>("Exec SearchVehicles @PageSize, @PageNumber, @SearchTerm, @SortColumn, @SortDirection, @SingleFiltter, @MultiFiltter, @MinPrice, @MaxPrice, @StockAvail, @ColoursList, @TotalRecords OUTPUT",
                                                                          new SqlParameter("@PageSize", PageSize),
                                                                          new SqlParameter("@PageNumber", PageNumber),
                                                                          new SqlParameter("@SearchTerm", SearchTerm),
@@ -64,6 +64,7 @@ namespace Task1.Repository
                                                                          new SqlParameter("@MultiFiltter", MultiFiltter),
                                                                          new SqlParameter("@MinPrice", MinPrice),
                                                                          new SqlParameter("@MaxPrice", MaxPrice),
+                                                                         new SqlParameter("@ColoursList", ColoursSelected),
                                                                          new SqlParameter("@StockAvail", (object)StockAvailBool ?? DBNull.Value),
 
                                                                          TotalRecordsParam).ToListAsync();

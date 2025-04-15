@@ -23,11 +23,9 @@ namespace Task1.Controllers
         public async Task<IActionResult> Index(QueryDTO query)
         {
 
-            Console.WriteLine("Availability is " + query.StockAvail);
-            Console.WriteLine("MinPrice is " + query.MinPrice);
-            Console.WriteLine("MaxPrice is " + query.MaxPrice);
             IEnumerable<Brands> brands = await _UOFInstance._brandsRepository.GetAll();
             IEnumerable<Categories> categories = await _UOFInstance._categoriesRepository.GetAll();
+            IEnumerable<Colours> colours = await _UOFInstance._coloursRepository.GetAll();
 
             var CategoriesSelect = categories.Select(cat => new SelectListItem
             {
@@ -42,27 +40,19 @@ namespace Task1.Controllers
                 Selected = string.IsNullOrEmpty(query.SingleFilter)
             });
 
+
+
             var PageList = new List<SelectListItem>
-                {
-                    new SelectListItem{Text="5", Value="5"},
-                    new SelectListItem{Text="10", Value="10"},
-                    new SelectListItem{Text="15", Value="15"},
-                    new SelectListItem{Text="20", Value="20"},
-                };
+            {
+                 new SelectListItem{Text="5", Value="5"},
+                 new SelectListItem{Text="10", Value="10"},
+                 new SelectListItem{Text="15", Value="15"},
+                 new SelectListItem{Text="20", Value="20"},
+            };
 
             PageList.FirstOrDefault(p => p.Value == query.PageSize.ToString())!.Selected = true;
 
-
-            Console.WriteLine("Sort Column is " + query.SortColumn);
-            Console.WriteLine("Sort Direction is " + query.SortDirection);
-            Console.WriteLine("Multi dropdown is " + query.MultiFilter);
-            if (query.MinPrice < 200000)
-            {
-                query.MinPrice = 200000;
-                query.MaxPrice = 200000;
-
-            }
-            var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice, query.StockAvail.ToString() ?? "All");
+            var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice, query.StockAvail.ToString() ?? "All", query.ColoursList ?? "");
             int TotalRecords = result.TotalRecords;
 
             var TotalPages = (int)Math.Ceiling((double)TotalRecords / query.PageSize);
@@ -73,14 +63,10 @@ namespace Task1.Controllers
                 TotalRecords = TotalPages,
                 Query = query,
                 CategoryList = CategoriesSelect,
+                ColoursOptionList = colours.Select(clr => clr.Name).ToList(),
                 BrandList = brands.Select(b => b.Name),
                 PageSizeList = PageList
             };
-            Console.WriteLine("The CloursList is " + viewModel.Vehicles.Any());
-            foreach (var item in viewModel.Vehicles)
-            {
-                Console.WriteLine(item.ColoursNames);
-            }
 
             ViewBag.SelectedValues = viewModel.Query.MultiFilter;
             return View(viewModel);

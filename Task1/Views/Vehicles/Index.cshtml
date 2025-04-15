@@ -49,31 +49,60 @@
 				}
 			</div>
 
-		</div>
+			<!-- CheckBox button-->
+			<div class="Checkbox">
+				<div class="check-group">
 
-		<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
-		<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
+					@for (int i = 0; i < Model.ColoursOptionList.Count; i++)
+					{
+						var item = Model.ColoursOptionList[i];
+						var isChecked = Model.Query.ColoursList != null && Model.Query.ColoursList.Contains(item);
 
-		<div class="wrapper my-4">
-			<div class="container">
-				<div class="slider-wrapper d-flex gap-3 align-items-center flex-wrap ">
-					<div id="slider-range" style="width:80%"></div>
-					<div class="range mx-3"></div>
+						<span class="checkbox" for="colorCheckbox_@i">
+							<input class="checkbox__input color-checkbox"
+								   type="checkbox"
+								   value="@item"
+								   id="colorCheckbox_@i"
+							@(isChecked ? "checked" : "") />
 
-					<div class="range-wrapper">
+							<span class="checkbox__label">@item</span>
+						</span>
+					}
+
+					<!-- This is the field that will be submitted -->
+					<input type="hidden" id="ColoursListHidden" name="Query.ColoursList" value="" />
+
+					<div class="check-group__result">Options chosen:</div>
+				</div>
+			</div>
+
+			<!-- Range Slider -->
+			<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
+			<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
+
+			<div class="wrapper my-4">
+				<div class="container">
+					<div class="slider-wrapper d-flex gap-3 align-items-center flex-wrap ">
+						<div id="slider-range" style="width:80%"></div>
+						<div class="range mx-3"></div>
+
+						<div class="range-wrapper">
+						</div>
+
 					</div>
 
 				</div>
-
 			</div>
-		</div>
 
+
+		</div>
 		<button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
 
 	</form>
+	<br />
 	<!-- Search Form -->
 	<form asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
-		<div class="input-group w-50 mx-auto">
+		<div class="input-group w-100 mx-auto" style="width:100%;">
 			<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
 			<input type="hidden" name="Query.PageNumber" value="@Model.Query.PageNumber" />
 			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
@@ -109,6 +138,7 @@
 								   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
 								   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 								   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
+								   asp-route-Query.ColoursList="@Model.Query.ColoursList"
 								   asp-route-Query.StockAvail="@Model.Query.StockAvail"
 								   asp-route-Query.SortColumn="@column"
 								   asp-route-Query.SortDirection="@(Model.Query.SortDirection == "ASC" ? "DESC" : "ASC")">
@@ -204,6 +234,7 @@
 					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
+					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
 					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
 					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
 						First
@@ -219,6 +250,7 @@
 					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
+					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
 					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
 					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
 						Last
@@ -233,6 +265,7 @@
 					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
+					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
 					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
 					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
 						Next
@@ -247,6 +280,8 @@
 			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
 			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
 			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
+
+
 			<input type="hidden" name="Query.StockAvail" value="@Model.Query.StockAvail" />
 
 			<label class="me-2 mb-0">Page Size:</label>
@@ -274,6 +309,14 @@
 		$("#filterForm").on("submit", function () {
 			var selectedBrands = $("#MultiSelectFilter").val();
 			$("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
+
+			const selectedColours = [];
+
+			$(".color-checkbox:checked").each(function () {
+				selectedColours.push($(this).val());
+			});
+
+			$("#ColoursListHidden").val(selectedColours.join(","));
 
 			// Search text
 			$("#SearchTerm").val($("#SearchBox").val());
