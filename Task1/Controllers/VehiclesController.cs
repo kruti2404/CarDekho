@@ -76,9 +76,10 @@ namespace Task1.Controllers
                 BrandList = brands.Select(b => b.Name),
                 PageSizeList = PageList
             };
+            Console.WriteLine("The CloursList is " + viewModel.Vehicles.Any());
             foreach (var item in viewModel.Vehicles)
             {
-                Console.WriteLine(item.Quantity);
+                Console.WriteLine(item.ColoursNames);
             }
 
             ViewBag.SelectedValues = viewModel.Query.MultiFilter;

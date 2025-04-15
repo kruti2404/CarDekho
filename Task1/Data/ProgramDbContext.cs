@@ -22,13 +22,15 @@ namespace Task1.Data
             modelBuilder.Entity<Vehicles>()
                 .HasOne(v => v.Brands)
                 .WithMany(b => b.Vehicle)
-                .HasForeignKey(v => v.BrandID);
+                .HasForeignKey(v => v.BrandID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // one to many relationship with vehicles and CAtegories  
             modelBuilder.Entity<Vehicles>()
                 .HasOne(v => v.Categories)
                 .WithMany(c => c.Vehicles)
-                .HasForeignKey(v => v.CategoryId);
+                .HasForeignKey(v => v.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Non clustered Index For the Vehicles 
             modelBuilder.Entity<Vehicles>()
@@ -72,12 +74,22 @@ namespace Task1.Data
                 .IsUnique();
 
             modelBuilder.Entity<Stocks>()
-                .HasKey(stk => stk.Id);
+                .HasKey(stk => stk.Id)
+                .IsClustered();
 
             modelBuilder.Entity<Stocks>()
                 .HasOne(stk => stk.Vehicle)
                 .WithOne(vhc => vhc.Stocks)
-                .HasForeignKey<Stocks>(stk => stk.VehicleId);
+                .HasForeignKey<Stocks>(stk => stk.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Colours>()
+                .HasKey(clr => clr.Id)
+                .IsClustered();
+
+            modelBuilder.Entity<Colours>()
+                .HasMany(clr => clr.Vehicles)
+                .WithMany(vhc => vhc.Colours);
 
         }
 
@@ -85,6 +97,6 @@ namespace Task1.Data
         DbSet<Brands> Brands { get; set; }
         DbSet<Categories> Categories { get; set; }
         DbSet<Stocks> Stocks { get; set; }
-
+        DbSet<Colours> Colours { get; set; }
     }
 }

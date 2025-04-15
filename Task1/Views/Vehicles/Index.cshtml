@@ -22,7 +22,6 @@
 
 			<select id="MultiSelectFilter" multiple class="form-control" style="width:20%">
 
-
 				@foreach (var item in Model.BrandList as IEnumerable<string>)
 				{
 					var isSelected = selectedValues.Contains(item);
@@ -32,8 +31,6 @@
 			</select>
 
 			<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
-			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
-			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
 
 			<div class="">
 
@@ -52,22 +49,10 @@
 				}
 			</div>
 
-
-
-			<button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
 		</div>
-	</form>
 
-	<!-- Range Slider  -->
-	<form asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
-		<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
-		<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
-		<input type="hidden" name="Query.PageNumber" value="@Model.Query.PageNumber" />
-		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
 		<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
 		<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
-		<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
-		<input type="hidden" name="Query.StockAvail" value="@Model.Query.StockAvail" />
 
 		<div class="wrapper my-4">
 			<div class="container">
@@ -136,6 +121,8 @@
 					<th class="text-center">Category</th>
 					<th class="text-center">Brand</th>
 					<th class="text-center">Quantity</th>
+					<th class="text-center">Colours Available</th>
+
 					<th class="text-center">Action</th>
 				</tr>
 			</thead>
@@ -166,6 +153,7 @@
 							<td>@vehicle.CategoryName</td>
 							<td>@vehicle.BrandName</td>
 							<td>@vehicle.Quantity</td>
+							<td>@vehicle.ColoursNames</td>
 							<td>
 								<a href="#" class="text-primary me-2" title="Details">
 									<i class="bi bi-list"></i>
@@ -265,13 +253,9 @@
 			@Html.DropDownList("Query.PageSize", (List<SelectListItem>)Model.PageSizeList,
 							new { @class = "form-select form-select-sm w-auto me-2", onchange = "this.form.submit();" })
 
-
 		</form>
 	</div>
 </div>
-
-
-@* <link rel="stylesheet" href="~/css/Radio.css" /> *@
 
 <script>
 	$(function () {

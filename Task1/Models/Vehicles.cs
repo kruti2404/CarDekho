@@ -14,6 +14,6 @@
         public Categories Categories { get; set; }
         public int StockId { get; set; }
         public Stocks Stocks { get; set; }
-
+        public ICollection<Colours> Colours { get; set; }
     }
 }
