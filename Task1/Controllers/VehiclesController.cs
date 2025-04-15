@@ -22,7 +22,7 @@ namespace Task1.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(QueryDTO query)
         {
-
+            Console.WriteLine("Rating is " + query.Rating);
             IEnumerable<Brands> brands = await _UOFInstance._brandsRepository.GetAll();
             IEnumerable<Categories> categories = await _UOFInstance._categoriesRepository.GetAll();
             IEnumerable<Colours> colours = await _UOFInstance._coloursRepository.GetAll();

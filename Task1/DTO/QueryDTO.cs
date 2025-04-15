@@ -36,5 +36,6 @@ namespace Task1.DTO
         public int MaxPrice { get; set; } = 200000000;
         public StockAvailability StockAvail { get; set; } = StockAvailability.All;
         public string ColoursList { get; set; } = "";
+        public int Rating { get; set; } = 0;
     }
 }

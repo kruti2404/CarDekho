@@ -17,6 +17,7 @@
 		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
 		<div class="d-flex gap-3 align-items-center flex-wrap">
 
+
 			@Html.DropDownListFor(model => model.Query.SingleFilter, Model.CategoryList, new { @class = "form-select form-select-sm w-auto" })
 
 			<select id="MultiSelectFilter" multiple class="form-control" style="width:20%">
@@ -26,14 +27,13 @@
 					var isSelected = selectedValues.Contains(item);
 					<option value="@item">@item</option>
 				}
-
 			</select>
 
 			<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
 
-			<div class="">
+			<!--Radio button-->
+			<div class="d-flex flex-column">
 
-				<!--Radio button-->
 				@foreach (StockAvailability value in Enum.GetValues(typeof(StockAvailability)))
 				{
 					var isChecked = Model.Query.StockAvail == value;
@@ -43,7 +43,7 @@
 							   id="@value"
 							   value="@value"
 						@(isChecked ? "checked" : "") />
-						<label for="@value">@value.GetDescription()</label>
+						<label for="@value" style="width:fit-content;">@value.GetDescription()</label>
 					</span>
 				}
 			</div>
@@ -81,8 +81,8 @@
 
 			<div class="wrapper my-4">
 				<div class="container">
-					<div class="slider-wrapper d-flex gap-3 align-items-center flex-wrap ">
-						<div id="slider-range" style="width:80%"></div>
+					<div id="slider-wrapper">
+						<div id="slider-range"></div>
 						<div class="range mx-3"></div>
 
 						<div class="range-wrapper">
@@ -91,6 +91,22 @@
 					</div>
 
 				</div>
+			</div>
+
+			<!-- Rating filter  -->
+			<div class="Rating-Filtter">
+
+				<label class="rating-label">
+					<input class="rating"
+						   max="5"
+						   name="Query.Rating"
+						   oninput="this.style.setProperty('--value', this.value)"
+						   step="1"
+						   style="--stars:5;--value:@Model.Query.Rating"
+						   type="range"
+						   value="@Model.Query.Rating">
+				</label>
+
 			</div>
 
 
