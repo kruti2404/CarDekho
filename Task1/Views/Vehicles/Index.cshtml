@@ -14,7 +14,6 @@
 	<!-- Filter Form -->
 	<form id="filterForm" asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
 		<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
-		<input type="hidden" name="Query.PageNumber" value="@Model.Query.PageNumber" />
 		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
 		<div class="d-flex gap-3 align-items-center flex-wrap">
 
@@ -104,9 +103,9 @@
 	<form asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
 		<div class="input-group w-100 mx-auto" style="width:100%;">
 			<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
-			<input type="hidden" name="Query.PageNumber" value="@Model.Query.PageNumber" />
 			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
 			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
+			<input type="hidden" name="Query.ColoursList" value="@Model.Query.ColoursList" />
 			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
 			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
 			<input type="hidden" name="Query.StockAvail" value="@Model.Query.StockAvail" />
@@ -215,10 +214,10 @@
 					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
 					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
 					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
-					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
 					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
+					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
 					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
 					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
 						Previous
@@ -229,7 +228,6 @@
 					   asp-route-Query.PageSize="@Model.Query.PageSize"
 					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
 					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
 					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
 					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
@@ -245,7 +243,6 @@
 					   asp-route-Query.PageSize="@Model.Query.PageSize"
 					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
 					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
 					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
 					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
@@ -278,6 +275,7 @@
 			<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
 			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
 			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
+			<input type="hidden" name="Query.ColoursList" value="@Model.Query.ColoursList" />
 			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
 			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
 
