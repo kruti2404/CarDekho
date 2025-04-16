@@ -143,16 +143,7 @@
 							<div class="d-flex align-items-center justify-content-between gap-2">
 								<span>@column</span>
 								<a class="btn btn-sm p-0 border-0 bg-transparent"
-								   asp-route-Query.PageNumber="@Model.Query.PageNumber"
-								   asp-route-Query.PageSize="@Model.Query.PageSize"
-								   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
-								   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-								   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
-								   asp-route-Query.MinPrice="@Model.Query.MinPrice"
-								   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
-								   asp-route-Query.ColoursList="@Model.Query.ColoursList"
-								   asp-route-Query.Rating="@Model.Query.Rating"
-								   asp-route-Query.StockAvail="@Model.Query.StockAvail"
+								   asp-all-route-data="@Model.Query.ToDictionary()"
 								   asp-route-Query.SortColumn="@column"
 								   asp-route-Query.SortDirection="@(Model.Query.SortDirection == "ASC" ? "DESC" : "ASC")">
 									<i class="bi @(Model.Query.SortDirection == "ASC" ? "bi-sort-up" : "bi-sort-down")"></i>
@@ -229,35 +220,18 @@
 	<div class="d-flex justify-content-between align-items-end mt-4 flex-wrap gap-3">
 		<nav>
 			<ul class="pagination pagination-sm mb-0">
+				<!-- Previous -->
 				<li class="page-item @(Model.Query.PageNumber <= 1 ? "disabled" : "")">
-					<a class="page-link" asp-route-Query.PageNumber="1"
-					   asp-route-Query.PageSize="@Model.Query.PageSize"
-					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
-					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
-					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
-					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
-					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
-					   asp-route-Query.Rating="@Model.Query.Rating"
-					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
-					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
-					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
+					<a class="page-link"
+					   asp-all-route-data="@Model.Query.ToDictionary()"
+					   asp-route-Query.PageNumber="@Model.Query.PageNumber - 1">
 						Previous
 					</a>
 				</li>
 				<li class="page-item @(Model.Query.PageNumber == 1 ? "active" : "")">
-					<a class="page-link" asp-route-Query.PageNumber="@(Model.Query.PageNumber - 1)"
-					   asp-route-Query.PageSize="@Model.Query.PageSize"
-					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
-					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
-					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
-					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
-					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
-					   asp-route-Query.Rating="@Model.Query.Rating"
-					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
-					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
-					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
+					<a class="page-link"
+					   asp-all-route-data="@Model.Query.ToDictionary()"
+					   asp-route-Query.PageNumber="1">
 						1
 					</a>
 				</li>
@@ -265,35 +239,17 @@
 				{
 
 					<li class="page-item @(Model.Query.PageNumber == Model.TotalPages ? "active" : "")">
-						<a class="page-link" asp-route-Query.PageNumber="@Model.TotalPages"
-						   asp-route-Query.PageSize="@Model.Query.PageSize"
-						   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
-						   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-						   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
-						   asp-route-Query.MinPrice="@Model.Query.MinPrice"
-						   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
-						   asp-route-Query.StockAvail="@Model.Query.StockAvail"
-						   asp-route-Query.ColoursList="@Model.Query.ColoursList"
-						   asp-route-Query.Rating="@Model.Query.Rating"
-						   asp-route-Query.SortColumn="@Model.Query.SortColumn"
-						   asp-route-Query.SortDirection="@Model.Query.SortDirection">
+						<a class="page-link"
+						   asp-all-route-data="@Model.Query.ToDictionary()"
+						   asp-route-Query.PageNumber="@Model.TotalPages">
 							@Model.TotalPages
 						</a>
 					</li>
 				}
 				<li class="page-item @(Model.Query.PageNumber >= Model.TotalPages ? "disabled" : "")">
-					<a class="page-link" asp-route-Query.PageNumber="@(Model.Query.PageNumber + 1)"
-					   asp-route-Query.PageSize="@Model.Query.PageSize"
-					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
-					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
-					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
-					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
-					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
-					   asp-route-Query.Rating="@Model.Query.Rating"
-					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
-					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
-					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
+					<a class="page-link"
+					   asp-all-route-data="@Model.Query.ToDictionary()"
+					   asp-route-Query.PageNumber="@(Model.Query.PageNumber + 1)">
 						Next
 					</a>
 				</li>

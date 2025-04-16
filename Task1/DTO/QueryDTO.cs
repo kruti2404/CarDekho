@@ -37,5 +37,26 @@ namespace Task1.DTO
         public StockAvailability StockAvail { get; set; } = StockAvailability.All;
         public string ColoursList { get; set; } = "";
         public int Rating { get; set; } = 0;
+
+
+        public Dictionary<string, string> ToDictionary()
+        {
+            return new Dictionary<string, string>
+        {
+            { "Query.PageNumber", PageNumber.ToString() },
+            { "Query.PageSize", PageSize.ToString() },
+            { "Query.SearchTerm", SearchTerm ?? "" },
+            { "Query.SingleFilter", SingleFilter ?? "" },
+            { "Query.MultiFilter", MultiFilter ?? "" },
+            { "Query.MinPrice", MinPrice.ToString() },
+            { "Query.MaxPrice", MaxPrice.ToString() },
+            { "Query.StockAvail", StockAvail.ToString() },
+            { "Query.Rating", Rating.ToString() },
+            { "Query.ColoursList", ColoursList ?? "" },
+            { "Query.SortColumn", SortColumn ?? "" },
+            { "Query.SortDirection", SortDirection ?? "" }
+        };
+        }
+
     }
 }
