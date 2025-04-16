@@ -72,6 +72,18 @@ namespace Task1.Controllers
             return View(viewModel);
 
         }
+        [HttpGet]
+        public async Task<IActionResult> Details(int Id)
+        {
+            if (Id == 0)
+            {
+                return NotFound();
+            }
+
+            var result = await _UOFInstance._vehicleRepository.GetById(Id);
+
+            return PartialView(result);
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Task1.Data;
@@ -19,15 +20,25 @@ namespace Task1.Repository
             _table = _context.Set<T>();
         }
 
-        public async Task<T> GetById(int id)
-        {
-            return await _table.FindAsync(id);
+        //public async Task<T> GetById(int id)
+        //{
+        //    return await _table.FindAsync(id);
 
-        }
+        //}
 
         public async Task<IEnumerable<T>> GetAll()
         {
             return await _table.ToListAsync();
+        }
+
+        public async Task<VehicleDTO> GetById(int Id)
+        {
+            var result = await _context.Database.SqlQueryRaw<VehicleDTO>("Exec GetRecordById @Id",
+                                                                            new SqlParameter("@Id", Id)).ToListAsync();
+            var singlerecord = result.FirstOrDefault(rst => rst.Id == Id);
+
+            return singlerecord ?? new VehicleDTO();
+
         }
 
         public async Task<VehicleViewModel> GetAll(int PageSize, int PageNumber, string SearchTerm, string SortColumn, string SortDirection, string SingleFiltter, string MultiFiltter, int MinPrice, int MaxPrice, string StockAvail, string ColoursSelected, int Rating)

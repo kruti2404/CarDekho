@@ -1,0 +1,38 @@
+﻿@model Task1.DTO.VehicleDTO;
+@{
+	ViewBag.Title = "Details";
+}
+
+<div>
+	<img src="https://media.istockphoto.com/id/588605048/photo/old-station-wagon.jpg?s=612x612&w=0&k=20&c=0XQ5jcWhEG7vczyGWWrEFUW6dP6JM9ayWYFi_psJG2o=" alt="image of car" />
+
+	<h4>@Model.Name</h4>
+	<span class="d-flex flex-row gap-5">
+
+		<p><strong>Model Year:</strong> @Model.ModelYear</p>
+		<p><strong>Price:</strong> ₹@Math.Floor(Model.Price)</p>
+		<p>
+			<strong>Rating:</strong>
+			@for (int i = 1; i <= 5; i++)
+			{
+				if (i <= Model.Rating)
+				{
+					<span class="text-warning">★</span>
+				}
+				else
+				{
+					<span class="text-muted">☆</span>
+				}
+			}
+		</p>
+	</span>
+	<p><strong>Description:</strong> @Model.Description</p>
+
+	<span class="d-flex flex-row gap-2">
+		<p><strong>Category:</strong> @Model.CategoryName</p>
+		<p><strong>Brand:</strong> @Model.BrandName</p>
+		<p><strong>Quantity:</strong> @Model.Quantity</p>
+		<p><strong>Colours Available:</strong> @Model.ColoursNames</p>
+	</span>
+</div>
+
