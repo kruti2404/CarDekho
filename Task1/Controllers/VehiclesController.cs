@@ -52,15 +52,15 @@ namespace Task1.Controllers
 
             PageList.FirstOrDefault(p => p.Value == query.PageSize.ToString())!.Selected = true;
 
-            var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice, query.StockAvail.ToString() ?? "All", query.ColoursList ?? "");
-            int TotalRecords = result.TotalRecords;
+            var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice, query.StockAvail.ToString() ?? "All", query.ColoursList ?? "", query.Rating);
+            int TotalRecords = result.TotalPages;
 
             var TotalPages = (int)Math.Ceiling((double)TotalRecords / query.PageSize);
 
             var viewModel = new VehicleViewModel
             {
                 Vehicles = result.Vehicles,
-                TotalRecords = TotalPages,
+                TotalPages = TotalPages,
                 Query = query,
                 CategoryList = CategoriesSelect,
                 ColoursOptionList = colours.Select(clr => clr.Name).ToList(),

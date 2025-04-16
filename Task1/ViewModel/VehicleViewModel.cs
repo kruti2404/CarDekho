@@ -7,7 +7,7 @@ namespace Task1.ViewModel
     {
         public List<VehicleDTO> Vehicles { get; set; }
         public QueryDTO Query { get; set; }
-        public int TotalRecords { get; set; }
+        public int TotalPages{ get; set; }
 
         public List<SelectListItem> CategoryList { get; set; } = new();
         public List<string> ColoursOptionList { get; set; } = new();

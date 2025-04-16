@@ -30,7 +30,7 @@ namespace Task1.Repository
             return await _table.ToListAsync();
         }
 
-        public async Task<VehicleViewModel> GetAll(int PageSize, int PageNumber, string SearchTerm, string SortColumn, string SortDirection, string SingleFiltter, string MultiFiltter, int MinPrice, int MaxPrice, string StockAvail, string ColoursSelected)
+        public async Task<VehicleViewModel> GetAll(int PageSize, int PageNumber, string SearchTerm, string SortColumn, string SortDirection, string SingleFiltter, string MultiFiltter, int MinPrice, int MaxPrice, string StockAvail, string ColoursSelected, int Rating)
         {
             bool? StockAvailBool;
             if (StockAvail == "OutOfStock")
@@ -54,7 +54,7 @@ namespace Task1.Repository
             };
 
 
-            var result = await _context.Database.SqlQueryRaw<VehicleDTO>("Exec SearchVehicles @PageSize, @PageNumber, @SearchTerm, @SortColumn, @SortDirection, @SingleFiltter, @MultiFiltter, @MinPrice, @MaxPrice, @StockAvail, @ColoursList, @TotalRecords OUTPUT",
+            var result = await _context.Database.SqlQueryRaw<VehicleDTO>("Exec SearchVehicles @PageSize, @PageNumber, @SearchTerm, @SortColumn, @SortDirection, @SingleFiltter, @MultiFiltter, @MinPrice, @MaxPrice, @StockAvail, @ColoursList, @Rating, @TotalRecords OUTPUT",
                                                                          new SqlParameter("@PageSize", PageSize),
                                                                          new SqlParameter("@PageNumber", PageNumber),
                                                                          new SqlParameter("@SearchTerm", SearchTerm),
@@ -66,6 +66,7 @@ namespace Task1.Repository
                                                                          new SqlParameter("@MaxPrice", MaxPrice),
                                                                          new SqlParameter("@ColoursList", ColoursSelected),
                                                                          new SqlParameter("@StockAvail", (object)StockAvailBool ?? DBNull.Value),
+                                                                         new SqlParameter("@Rating", Rating),
 
                                                                          TotalRecordsParam).ToListAsync();
 
@@ -76,7 +77,7 @@ namespace Task1.Repository
             var vehicleModel = new VehicleViewModel
             {
                 Vehicles = result,
-                TotalRecords = totalRecords,
+                TotalPages = totalRecords,
             };
             Console.WriteLine("Total raw :" + totalRecords);
 

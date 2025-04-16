@@ -164,4 +164,10 @@
 {
     right: -15px;
 }
+
+}
+
+//to hide
+.hide {
+    display: none;
 }

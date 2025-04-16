@@ -32,12 +32,12 @@
 			<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
 
 			<!--Radio button-->
-			<div class="d-flex flex-column">
+			<div class="d-flex flex-column m-2 p-3">
 
 				@foreach (StockAvailability value in Enum.GetValues(typeof(StockAvailability)))
 				{
 					var isChecked = Model.Query.StockAvail == value;
-					<span>
+					<span class="p-2">
 						<input type="radio"
 							   name="Query.StockAvail"
 							   id="@value"
@@ -124,6 +124,7 @@
 			<input type="hidden" name="Query.ColoursList" value="@Model.Query.ColoursList" />
 			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
 			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
+			<input type="hidden" name="Query.Rating" value="@Model.Query.Rating" />
 			<input type="hidden" name="Query.StockAvail" value="@Model.Query.StockAvail" />
 
 			<input type="text" class="form-control" placeholder="Search..." name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
@@ -154,6 +155,7 @@
 								   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 								   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 								   asp-route-Query.ColoursList="@Model.Query.ColoursList"
+								   asp-route-Query.Rating="@Model.Query.Rating"
 								   asp-route-Query.StockAvail="@Model.Query.StockAvail"
 								   asp-route-Query.SortColumn="@column"
 								   asp-route-Query.SortDirection="@(Model.Query.SortDirection == "ASC" ? "DESC" : "ASC")">
@@ -233,6 +235,7 @@
 					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
+					   asp-route-Query.Rating="@Model.Query.Rating"
 					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
 					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
 					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
@@ -248,28 +251,34 @@
 					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
+					   asp-route-Query.Rating="@Model.Query.Rating"
 					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
 					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
 					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
-						First
+						1
 					</a>
 				</li>
-				<li class="page-item @(Model.Query.PageNumber == Model.TotalRecords ? "active" : "")">
-					<a class="page-link" asp-route-Query.PageNumber="@Model.TotalRecords"
-					   asp-route-Query.PageSize="@Model.Query.PageSize"
-					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
-					   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
-					   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
-					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
-					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
-					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
-					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
-					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
-					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
-						Last
-					</a>
-				</li>
-				<li class="page-item @(Model.Query.PageNumber >= Model.TotalRecords ? "disabled" : "")">
+				@if (Model.TotalPages > 1)
+				{
+
+					<li class="page-item @(Model.Query.PageNumber == Model.TotalPages ? "active" : "")">
+						<a class="page-link" asp-route-Query.PageNumber="@Model.TotalPages"
+						   asp-route-Query.PageSize="@Model.Query.PageSize"
+						   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
+						   asp-route-Query.SingleFilter="@Model.Query.SingleFilter"
+						   asp-route-Query.MultiFilter="@Model.Query.MultiFilter"
+						   asp-route-Query.MinPrice="@Model.Query.MinPrice"
+						   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
+						   asp-route-Query.StockAvail="@Model.Query.StockAvail"
+						   asp-route-Query.ColoursList="@Model.Query.ColoursList"
+						   asp-route-Query.Rating="@Model.Query.Rating"
+						   asp-route-Query.SortColumn="@Model.Query.SortColumn"
+						   asp-route-Query.SortDirection="@Model.Query.SortDirection">
+							@Model.TotalPages
+						</a>
+					</li>
+				}
+				<li class="page-item @(Model.Query.PageNumber >= Model.TotalPages ? "disabled" : "")">
 					<a class="page-link" asp-route-Query.PageNumber="@(Model.Query.PageNumber + 1)"
 					   asp-route-Query.PageSize="@Model.Query.PageSize"
 					   asp-route-Query.SearchTerm="@Model.Query.SearchTerm"
@@ -278,6 +287,7 @@
 					   asp-route-Query.MinPrice="@Model.Query.MinPrice"
 					   asp-route-Query.MaxPrice="@Model.Query.MaxPrice"
 					   asp-route-Query.StockAvail="@Model.Query.StockAvail"
+					   asp-route-Query.Rating="@Model.Query.Rating"
 					   asp-route-Query.ColoursList="@Model.Query.ColoursList"
 					   asp-route-Query.SortColumn="@Model.Query.SortColumn"
 					   asp-route-Query.SortDirection="@Model.Query.SortDirection">
@@ -294,6 +304,8 @@
 			<input type="hidden" name="Query.ColoursList" value="@Model.Query.ColoursList" />
 			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
 			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
+			<input type="hidden" name="Query.Rating" value="@Model.Query.Rating" />
+
 
 
 			<input type="hidden" name="Query.StockAvail" value="@Model.Query.StockAvail" />
