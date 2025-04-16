@@ -5,10 +5,10 @@
 }
 
 <div class="container" style="text-align:left;">
-	<h2 class="text-center mb-4">Vehicles</h2>
+	<h2 class="text-center mb-1">Vehicles</h2>
 
 	<!-- Filter Form -->
-	<form id="filterForm" asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
+	<form id="filterForm" asp-action="Index" asp-controller="Vehicles" method="get" class="mb-2">
 		<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
 		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
 		<div class="d-flex gap-3 align-items-center flex-wrap">
@@ -79,7 +79,7 @@
 				<div class="container">
 					<div id="slider-wrapper">
 						<div id="slider-range"></div>
-						<div class="range mx-3"></div>
+						<div class="range"></div>
 
 						<div class="range-wrapper">
 						</div>
@@ -107,13 +107,13 @@
 
 
 		</div>
-		<button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
+		<center><button type="submit" class="btn btn-sm btn-primary">Filter</button></center>
 
 	</form>
 	<br />
 	<!-- Search Form -->
 	<form asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
-		<div class="input-group w-100 mx-auto" style="width:100%;">
+		<div class="input-group mx-auto" style="width:70%;">
 			<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
 			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
 			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />

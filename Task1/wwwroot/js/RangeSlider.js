@@ -44,9 +44,9 @@
         slide: function (event, ui) {
             // Update displayed values
             $('.range').html(
-                '<span class="range-value"><sup>$</sup>' + formatCurrency(ui.values[0]) + '</span>' +
+                '<span class="range-value"><sup>₹</sup>' + formatCurrency(ui.values[0]) + '</span>' +
                 '<span class="range-divider"></span>' +
-                '<span class="range-value"><sup>$</sup>' + formatCurrency(ui.values[1]) + '</span>'
+                '<span class="range-value"><sup>₹</sup>' + formatCurrency(ui.values[1]) + '</span>'
             );
 
             // Update hidden fields for form submission
@@ -63,9 +63,9 @@
 
     // Set initial range display
     $('.range').html(
-        '<span class="range-value"><sup>$</sup>' + formatCurrency(minVal) + '</span>' +
+        '<span class="range-value"><sup>₹</sup>' + formatCurrency(minVal) + '</span>' +
         '<span class="range-divider"></span>' +
-        '<span class="range-value"><sup>$</sup>' + formatCurrency(maxVal) + '</span>'
+        '<span class="range-value"><sup>₹</sup>' + formatCurrency(maxVal) + '</span>'
     );
 
     // Move display inside slider range area
