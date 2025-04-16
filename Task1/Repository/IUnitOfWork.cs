@@ -8,6 +8,7 @@ namespace Task1.Repository
         IGenericRepository<Categories> _categoriesRepository { get; }
         IGenericRepository<Brands> _brandsRepository { get; }
         IGenericRepository<Colours> _coloursRepository { get; }
+        IGenericRepository<Stocks> _stocksRepository { get; }
         Task CreateTransaction();
         Task Save();
     }

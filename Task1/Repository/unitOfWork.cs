@@ -12,6 +12,8 @@ namespace Task1.Repository
         public IGenericRepository<Categories> _categoriesRepository { get; }
         public IGenericRepository<Brands> _brandsRepository { get; }
         public IGenericRepository<Colours> _coloursRepository { get; }
+        public IGenericRepository<Stocks> _stocksRepository { get; }
+
 
         bool isDisposed;
         private readonly ProgramDbContext _context;
@@ -25,6 +27,7 @@ namespace Task1.Repository
             _categoriesRepository = new GenericRepository<Categories>(_context);
             _brandsRepository = new GenericRepository<Brands>(_context);
             _coloursRepository = new GenericRepository<Colours>(_context);
+            _stocksRepository = new GenericRepository<Stocks>(_context);
         }
 
         public async Task CreateTransaction()

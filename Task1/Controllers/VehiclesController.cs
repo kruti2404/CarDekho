@@ -150,6 +150,94 @@ namespace Task1.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int Id)
+        {
+            if (Id == 0)
+            {
+                return NotFound();
+            }
+
+            var result = await _UOFInstance._vehicleRepository.GetById(Id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            var newVehicle = new Vehicles
+            {
+                Id = result.Id,
+                Name = result.Name,
+                ModelYear = result.ModelYear,
+                Description = result.Description,
+                Price = result.Price,
+                Rating = result.Rating,
+            };
+            return View(newVehicle);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Vehicles vehicle)
+        {
+            if (vehicle.Id == 0 || vehicle == null || vehicle.Id != vehicle.Id)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                Console.WriteLine("Hereeeee");
+                return View(vehicle);
+            }
+
+            try
+            {
+                var existingVehicle = await _UOFInstance._vehicleRepository.GetById(vehicle.Id);
+                if (existingVehicle == null)
+                {
+                    return NotFound();
+                }
+
+                existingVehicle.Name = vehicle.Name;
+
+                var brands = (await _UOFInstance._brandsRepository.GetAll()).FirstOrDefault(brd => brd.Name == existingVehicle.BrandName);
+                Console.WriteLine(brands?.Id);
+                var categories = (await _UOFInstance._categoriesRepository.GetAll()).FirstOrDefault(cat => cat.Name == existingVehicle.CategoryName);
+                Console.WriteLine(categories?.Id);
+
+
+                var stock = (await _UOFInstance._stocksRepository.GetAll()).FirstOrDefault(stk => stk.VehicleId == existingVehicle.Id);
+                Console.WriteLine(stock?.Id);
+
+
+
+                var newVehicle = new Vehicles
+                {
+                    Id = vehicle.Id,
+                    Name = vehicle.Name,
+                    ModelYear = vehicle.ModelYear,
+                    Description = vehicle.Description,
+                    Price = vehicle.Price,
+                    Rating = vehicle.Rating,
+                    BrandID = brands?.Id,
+                    CategoryId = categories?.Id,
+                    StockId = stock?.Id
+                };
+
+
+                _UOFInstance._vehicleRepository.Update(newVehicle);
+                await _UOFInstance.Save();
+
+                Console.WriteLine("The edit is successfull");
+                return RedirectToAction("Index", "Vehicles");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating vehicle: {ex.Message}");
+                ModelState.AddModelError("", "An error occurred while updating the vehicle.");
+                return View(vehicle);
+            }
+        }
 
 
     }
