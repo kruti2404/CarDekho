@@ -4,7 +4,7 @@
 	ViewBag.Title = "Index";
 }
 
-<div class="container ">
+<div class="container" style="text-align:left;">
 	<h2 class="text-center mb-4">Vehicles</h2>
 
 	<!-- Filter Form -->
@@ -202,7 +202,7 @@
 									<i class="bi bi-list"></i>
 								</a>
 								<div id="DetailsView"></div>
-								<a href="#" class="text-danger" title="Delete">
+								<a asp-action="Delete" asp-controller="Vehicles" asp-route-Id="@vehicle.Id" class="text-danger" title="Delete">
 									<i class="bi bi-trash3-fill"></i>
 								</a>
 							</td>
@@ -318,7 +318,7 @@
 <!-- Modal Structure -->
 <div class="modal fade" id="vehicleDetailsModal" tabindex="-1" role="dialog" aria-labelledby="vehicleDetailsModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
-		<div class="modal-content" style="width:140%;">
+		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="vehicleDetailsModalLabel">Vehicle Details</h5>
 				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">

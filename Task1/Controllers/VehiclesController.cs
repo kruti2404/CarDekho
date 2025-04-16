@@ -85,5 +85,72 @@ namespace Task1.Controllers
             return PartialView(result);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            if (Id == 0)
+            {
+                return NotFound();
+            }
+
+            var result = await _UOFInstance._vehicleRepository.GetById(Id);
+
+            var vehicles = new Vehicles()
+            {
+                Id = result.Id,
+                Name = result.Name,
+                ModelYear = result.ModelYear,
+                Description = result.Description,
+                Price = result.Price,
+                Rating = result.Rating,
+
+            };
+
+            return View(vehicles);
+        }
+        [HttpPost]
+        [DisplayName("Delete")]
+        public async Task<IActionResult> ConfirmDelete(int Id)
+        {
+            if (Id == 0)
+            {
+                return NotFound();
+            }
+
+            var result = await _UOFInstance._vehicleRepository.GetById(Id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            var vehicles = new Vehicles
+            {
+                Id = result.Id,
+                Name = result.Name,
+                ModelYear = result.ModelYear,
+                Description = result.Description,
+                Price = result.Price,
+                Rating = result.Rating
+            };
+
+            try
+            {
+                _UOFInstance._vehicleRepository.Delete(vehicles);
+                await _UOFInstance.Save();
+
+
+                return RedirectToAction("Index", "Vehicles");
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Error deleting vehicle: {ex.Message}");
+                return View(vehicles);
+            }
+        }
+
+
+
+
     }
 }

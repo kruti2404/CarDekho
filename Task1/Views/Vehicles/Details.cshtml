@@ -3,11 +3,14 @@
 	ViewBag.Title = "Details";
 }
 
-<div>
-	<img src="https://media.istockphoto.com/id/588605048/photo/old-station-wagon.jpg?s=612x612&w=0&k=20&c=0XQ5jcWhEG7vczyGWWrEFUW6dP6JM9ayWYFi_psJG2o=" alt="image of car" />
+<div class="model-details">
+	<center>
+
+		<img src="https://media.istockphoto.com/id/588605048/photo/old-station-wagon.jpg?s=612x612&w=0&k=20&c=0XQ5jcWhEG7vczyGWWrEFUW6dP6JM9ayWYFi_psJG2o=" alt="image of car" />
+	</center>
 
 	<h4>@Model.Name</h4>
-	<span class="d-flex flex-row gap-5">
+	<span>
 
 		<p><strong>Model Year:</strong> @Model.ModelYear</p>
 		<p><strong>Price:</strong> ₹@Math.Floor(Model.Price)</p>
@@ -28,7 +31,7 @@
 	</span>
 	<p><strong>Description:</strong> @Model.Description</p>
 
-	<span class="d-flex flex-row gap-2">
+	<span>
 		<p><strong>Category:</strong> @Model.CategoryName</p>
 		<p><strong>Brand:</strong> @Model.BrandName</p>
 		<p><strong>Quantity:</strong> @Model.Quantity</p>
