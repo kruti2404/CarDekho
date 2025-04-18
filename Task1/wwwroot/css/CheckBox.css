@@ -1,52 +1,60 @@
-﻿.check-group {
+﻿/* ============================== */
+/* Checkbox Component Styles      */
+/* ============================== */
+
+.check-group {
     background: #fff;
-    max-width: 40rem;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 10, 0.2);
-    counter-reset: total checked;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+    max-width: 40rem; /* Maximum width of the checkbox group */
+    padding: 0.5rem; /* Padding inside the group container */
+    border-radius: 0.5rem; /* Rounded corners for the container */
+    box-shadow: 0 1px 3px rgba(0, 0, 10, 0.2); /* Subtle shadow for depth */
+    counter-reset: total checked; /* Initialize counters for total and checked items */
+    display: grid; /* Use grid layout */
+    grid-template-columns: repeat(3, 1fr); /* Create 3 equal columns */
+    gap: 0.5rem; /* Spacing between grid items (checkboxes) */
 }
 
-    .check-group > * + * {
-        margin-top: 0.01rem;
-    }
+/* Removed redundant adjacent sibling selector (.check-group > * + *) as `gap` handles spacing in grid */
 
 .checkbox {
-    display: flex;
-    align-items: center;
-    counter-increment: total;
-    position: relative;
-    padding: 4px 0;
-    cursor: pointer;
+    display: flex; /* Align input and label horizontally */
+    align-items: center; /* Vertically center items in the flex container */
+    counter-increment: total; /* Increment the total counter for each checkbox */
+    position: relative; /* Needed if adding absolutely positioned elements later */
+    padding: 4px 0; /* Vertical padding for spacing */
+    cursor: pointer; /* Indicate interactivity */
 }
 
 .checkbox__input {
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-right: 0.5rem;
-    cursor: pointer;
+    width: 1.25rem; /* Width of the checkbox input */
+    height: 1.25rem; /* Height of the checkbox input */
+    margin-right: 0.5rem; /* Space between checkbox and label */
+    cursor: pointer; /* Indicate the input itself is clickable */
+    flex-shrink: 0; /* Prevent the checkbox from shrinking */
 }
 
     .checkbox__input:checked {
-        counter-increment: checked;
+        counter-increment: checked; /* Increment the checked counter when this box is checked */
     }
 
 .checkbox__label {
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: #333;
+    cursor: pointer; /* Indicate the label is clickable (linked to input) */
+    font-size: 0.95rem; /* Font size for the label text */
+    color: #333; /* Text color for the label */
+    line-height: 1.2; /* Improve readability */
 }
 
+/* Styles for the result display area */
 .check-group__result {
-    font-weight: bold;
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    font-weight: bold; /* Make the result text bold */
+    padding-top: 0.75rem; /* Space above the result */
+    border-top: 1px solid rgba(0, 0, 0, 0.2); /* Separator line */
+    grid-column: 1 / -1; /* Make the result span all columns */
+    margin-top: 0.5rem; /* Add margin top to ensure separation even if gap doesn't apply */
 }
 
+    /* Display the counter values (Checked / Total) */
     .check-group__result::after {
-        content: counter(checked) " / " counter(total);
-        padding-left: 0.5rem;
+        content: counter(checked) " / " counter(total); /* Generate content using counters */
+        padding-left: 0.5rem; /* Space between the label text (if any) and the counter result */
     }

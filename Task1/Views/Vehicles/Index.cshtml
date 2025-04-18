@@ -264,6 +264,8 @@
 			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
 			<input type="hidden" name="Query.Rating" value="@Model.Query.Rating" />
 
+
+
 			<input type="hidden" name="Query.StockAvail" value="@Model.Query.StockAvail" />
 
 			<label class="me-2 mb-0">Page Size:</label>
@@ -336,37 +338,37 @@
 		});
 
 
+		
+    // --- Modal Opening Logic ---
+    $('.open-modal').click(function (e) {
+        e.preventDefault(); // Prevent default link behavior
 
-	// --- Modal Opening Logic ---
-		$('.open-modal').click(function (e) {
-			e.preventDefault(); // Prevent default link behavior
+        // Get the vehicle ID from the data attribute
+        var vehicleId = $(this).data('vehicleid');
+        console.log('Vehicle id clicked:', vehicleId);
 
-			// Get the vehicle ID from the data attribute
-			var vehicleId = $(this).data('vehicleid');
-			console.log('Vehicle id clicked:', vehicleId);
+        // Get references to the modal and its body
+        var modal = $('#vehicleDetailsModal');
+        var modalBody = modal.find('.modal-body');
 
-			// Get references to the modal and its body
-			var modal = $('#vehicleDetailsModal');
-			var modalBody = modal.find('.modal-body');
+        // Clear previous content (optional, good practice)
+        modalBody.html('<p>Loading details...</p>'); // Show a loading message
 
+        // Show the modal
+        modal.modal('show');
 
-			modalBody.html('<p>Loading details...</p>'); // Show a loading message
+        // Make AJAX request to get vehicle details
+        $.get('@Url.Action("Details", "Vehicles")', { id: vehicleId })
+            .done(function (data) {
+                // Success: Load the returned HTML into the modal body
+                modalBody.html(data);
+            })
+            .fail(function () {
 
-			// Show the modal
-			modal.modal('show');
-
-
-			// Make AJAX request to get vehicle details
-			$.get('@Url.Action("Details", "Vehicles")', { id: vehicleId })
-				.done(function (data) {
-					// Success: Load the returned HTML into the modal body
-					modalBody.html(data);
-				})
-				.fail(function () {
-					modalBody.html('<p class="text-danger">Error loading vehicle details. Please try again later.</p>');
-					console.error('AJAX request failed for vehicle details:', vehicleId);
-				});
-		});
+                modalBody.html('<p class="text-danger">Error loading vehicle details. Please try again later.</p>');
+                console.error('AJAX request failed for vehicle details:', vehicleId);
+            });
+    });
 
 	});
 

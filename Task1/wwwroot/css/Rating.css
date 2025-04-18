@@ -1,54 +1,85 @@
-﻿.rating {
-    --dir: right;
-    --fill: gold;
-    --fillbg: rgba(100, 100, 100, 0.25);
-    --star: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.25l-6.188 3.75 1.641-7.031-5.438-4.734 7.172-0.609 2.813-6.609 2.813 6.609 7.172 0.609-5.438 4.734 1.641 7.031z"/></svg>');
-    --stars: 5;
-    --starsize: 3rem;
-    --value: 1;
-    --x: calc(100% * (var(--value) / var(--stars)));
-    block-size: var(--starsize);
-    inline-size: calc(var(--stars) * var(--starsize));
+﻿/* ============================== */
+/* Star Rating Component Styles   */
+/* ============================== */
+
+.rating {
+    /* Custom properties for configuration */
+    --dir: right; /* Direction of fill (for LTR) */
+    --fill: gold; /* Color of the filled stars */
+    --fillbg: rgba(100, 100, 100, 0.25); /* Color of the unfilled star background */
+    --star: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.25l-6.188 3.75 1.641-7.031-5.438-4.734 7.172-0.609 2.813-6.609 2.813 6.609 7.172 0.609-5.438 4.734 1.641 7.031z"/></svg>'); /* SVG for the star shape */
+    --stars: 5; /* Total number of stars */
+    --starsize: 3rem; /* Size of each star */
+    --value: 1; /* Current rating value (should be updated by JS or input value) */
+    --x: calc(100% * (var(--value) / var(--stars))); /* Percentage fill based on value */
+    /* Sizing using logical properties */
+    block-size: var(--starsize); /* Logical height */
+    inline-size: calc(var(--stars) * var(--starsize)); /* Logical width = stars * size */
+
     position: relative;
-    touch-action: manipulation;
-    -webkit-appearance: none;
+    touch-action: manipulation; /* Improve touch interaction on slider */
+    -webkit-appearance: none; /* Remove default browser styling for range input */
+    appearance: none; /* Standard property */
+    border: none; /* Remove default border */
+    background: transparent; /* Ensure no background interferes */
+    cursor: pointer; /* Indicate interactivity */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
 }
 
+/* Adjust direction for Right-to-Left languages */
 [dir="rtl"] .rating {
     --dir: left;
 }
 
+/* Style the track for Firefox */
 .rating::-moz-range-track {
-    background: linear-gradient(to var(--dir), var(--fill) 0 var(--x), var(--fillbg) 0 var(--x));
+    background: linear-gradient(to var(--dir), var(--fill) 0 var(--x), var(--fillbg) var(--x) 100%);
     block-size: 100%;
-    mask: repeat left center/var(--starsize) var(--star);
+    mask-image: var(--star); /* Use SVG as mask */
+    mask-size: var(--starsize);
+    mask-repeat: repeat-x; /* Repeat mask horizontally */
 }
 
+/* Style the track for WebKit browsers (Chrome, Safari, Edge) */
 .rating::-webkit-slider-runnable-track {
-    background: linear-gradient(to var(--dir), var(--fill) 0 var(--x), var(--fillbg) 0 var(--x));
+    background: linear-gradient(to var(--dir), var(--fill) 0 var(--x), var(--fillbg) var(--x) 100%);
     block-size: 100%;
-    mask: repeat left center/var(--starsize) var(--star);
-    -webkit-mask: repeat left center/var(--starsize) var(--star);
+    mask-image: var(--star); /* Use SVG as mask */
+    -webkit-mask-image: var(--star); /* Prefixed version */
+    mask-size: var(--starsize);
+    -webkit-mask-size: var(--starsize);
+    mask-repeat: repeat-x;
+    -webkit-mask-repeat: repeat-x;
 }
 
+/* Hide the default thumb but keep its clickable area for Firefox */
 .rating::-moz-range-thumb {
     height: var(--starsize);
-    opacity: 0;
-    width: calc(var(--starsize) / 2);
+    /* Set width relative to star size for easier clicking */
+    width: calc(var(--starsize) / var(--stars));
+    opacity: 0; /* Make it invisible */
+    border: none; /* Remove default border */
 }
 
+/* Hide the default thumb but keep its clickable area for WebKit */
 .rating::-webkit-slider-thumb {
     height: var(--starsize);
-    opacity: 0;
-    width: calc(var(--starsize) / 2);
-    -webkit-appearance: none;
+    /* Set width relative to star size for easier clicking */
+    width: calc(var(--starsize) / var(--stars));
+    opacity: 0; /* Make it invisible */
+    -webkit-appearance: none; /* Remove default appearance */
+    appearance: none;
+    border: none; /* Remove default border */
 }
 
+/* Basic display and font settings for rating and its label */
 .rating, .rating-label {
-    display: block;
-    font-family: ui-sans-serif, system-ui, sans-serif;
+    display: block; /* Ensure they are block-level elements */
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 .rating-label {
-    margin-block-end: 1rem;
+    margin-block-end: 1rem; /* Space below the label (logical property for margin-bottom) */
+    font-weight: bold;
 }

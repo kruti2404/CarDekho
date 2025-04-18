@@ -1,22 +1,32 @@
-﻿﻿sup {
+﻿/* ============================== */
+/* Range Slider Component Styles  */
+/* ============================== */
+
+/* Basic superscript styling */
+sup {
     font-size: 80%;
     vertical-align: top;
     position: relative;
     top: 1px;
 }
 
+/* Wrapper styling - Note: `display: table` is an older centering method. Consider Flexbox/Grid if possible. */
 .wrapper {
-    display: table;
-    width: 50%;
-    height: 50%;
+    display: table; /* Using table display for layout (potentially for vertical centering) */
+    width: 50%; /* Example width */
+    height: 50%; /* Example height */
+    /* margin: auto; might be needed for horizontal centering if parent is block */
 }
 
+/* Modal Content styling - Negative margin suggests specific layout context */
 .modal-content {
-    margin-left: -30%;
-    width: 160%;
+    margin-left: -30%; /* Adjust positioning, likely within a constrained container */
+    width: 160%; /* Make content wider than its immediate container */
 }
 
-.model-details {
+/* Styling for details section, potentially within a modal */
+/* Corrected typo from 'model-details' to 'modal-details' for consistency */
+.modal-details {
     padding: 20px;
     background-color: #ffffff;
     border-radius: 8px;
@@ -24,171 +34,217 @@
     max-width: 100%;
     text-align: left;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Stack children vertically */
 }
 
-    .model-details span {
-        display: inline-flex;
-        align-items: center;
-        flex: 1;
-        align-content: space-between;
+    .modal-details span {
+        display: inline-flex; /* Use inline-flex for alignment within the span */
+        align-items: center; /* Vertically center items inside the span */
+        flex: 1; /* Allow spans to grow equally if needed */
+        /* Removed align-content: space-between; as it's for multi-line flex containers */
+        /* justify-content: space-between; might be needed here depending on inner content */
+        margin-bottom: 5px; /* Add some space between spans */
     }
 
-        .model-details span p {
-            padding-right: 10px;
+        .modal-details span p {
+            padding-right: 10px; /* Space after paragraph elements within the span */
+            margin: 0; /* Reset default paragraph margin */
         }
 
+/* jQuery UI Slider Track */
 .ui-slider {
     background: #efefef;
     border: 1px solid #d2d2d2;
     height: 10px;
     position: relative;
     border-radius: 100px;
+    margin: 20px 0; /* Add some margin for spacing */
 }
 
+/* jQuery UI Slider Selected Range */
 .ui-slider-range {
     background: #303365;
     height: 10px;
     position: absolute;
     border-top: 1px solid #1d1b4f;
     border-bottom: 1px solid #1d1b4f;
-    transform: translateY(-1px);
-    &:after
-
-{
-    content: '';
-    width: 100%;
-    height: 1px;
-    position: absolute;
+    /* transform: translateY(-1px); /* Slight adjustment to align with border */
+    /* Corrected syntax for pseudo-element */
+    border-radius: 100px; /* Match parent border-radius */
     top: 0;
-    left: 0;
-    opacity: 0.3;
+    bottom: 0;
 }
 
-}
+    /* Inner shadow/highlight effect for the range */
+    .ui-slider-range::after {
+        content: '';
+        width: 100%;
+        height: 1px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0.3;
+        /* background: rgba(255, 255, 255, 0.3); /* Example for a subtle highlight */
+    }
 
+/* jQuery UI Slider Handle */
 .ui-slider-handle {
-    background: #434796;
+    background: #434796; /* Fallback background */
+    background: linear-gradient(#303365, #000); /* Gradient background */
     position: absolute;
     width: 20px;
     height: 20px;
-    top: 50%;
+    top: 50%; /* Center vertically */
     display: block;
-    transform: translate(-50%, -50%);
-    border-radius: 10px;
+    transform: translate(-50%, -50%); /* Precise centering */
+    border-radius: 50%; /* Make it circular */
     z-index: 10;
-    background: linear-gradient(#303365, #000);
-    cursor: move; /* fallback if grab cursor is unsupported */
-    cursor: grab;
+    cursor: move; /* Fallback cursor */
+    cursor: grab; /* Standard grab cursor */
     cursor: -moz-grab;
     cursor: -webkit-grab;
-    box-shadow: inset -2px -2px 6px 2px rgba(0,0,0, 0.1);
-    transition: width 0.1s;
-    &:focus
-
-{
-    outline: none;
+    box-shadow: inset -2px -2px 6px 2px rgba(0,0,0, 0.1), 0 1px 3px rgba(0,0,0,0.3); /* Inner and outer shadow */
+    transition: width 0.1s, height 0.1s; /* Smooth transition for active state */
+    border: none; /* Remove potential default borders */
 }
 
-&:active {
-    cursor: grabbing;
-    cursor: -moz-grabbing;
-    cursor: -webkit-grabbing;
+    /* Corrected syntax for :focus pseudo-class */
+    .ui-slider-handle:focus {
+        outline: none; /* Remove default focus outline */
+        box-shadow: inset -2px -2px 6px 2px rgba(0,0,0, 0.1), 0 0 0 3px rgba(67, 71, 150, 0.5); /* Add focus ring */
+    }
+
+    /* Corrected syntax for :active pseudo-class */
+    .ui-slider-handle:active {
+        cursor: grabbing; /* Standard grabbing cursor */
+        cursor: -moz-grabbing;
+        cursor: -webkit-grabbing;
+    }
+
+/* Style for handle when active (usually via jQuery UI state class) */
+.ui-state-active { /* This class is typically added by jQuery UI while dragging */
+    width: 22px; /* Slightly larger handle when active */
+    height: 22px; /* Slightly larger handle when active */
 }
 
-}
 
-.ui-state-active {
-    width: 22px;
-}
-
-
-
-// Range Indicator
+/* --- Range Indicator (Tooltip) --- */
 
 .range-wrapper {
-    position: absolute;
-    top: -50px;
+    position: absolute; /* Position relative to the slider handle */
+    top: -55px; /* Position above the handle */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%); /* Center horizontally */
+    z-index: 20; /* Ensure it's above the handle */
+    pointer-events: none; /* Prevent tooltip from interfering with clicks */
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.15s ease-in-out;
+}
+/* Show tooltip on handle hover/focus */
+.ui-slider-handle:hover .range-wrapper,
+.ui-slider-handle:focus .range-wrapper,
+.ui-slider-handle.ui-state-active .range-wrapper { /* Show when dragging too */
+    opacity: 1;
 }
 
 .range {
-    margin-top: 10px;
-    margin-left: 30%;
+    /* margin-top: 10px; /* Removed, positioning handled by wrapper */
+    /* margin-left: 30%; /* Removed, centering handled by wrapper */
     background: #fff;
     white-space: nowrap;
     border: 1px solid #d2d2d2;
-    border-radius: 2px;
+    border-radius: 3px; /* Slightly rounded corners */
     font-size: 13px;
     letter-spacing: 0.02em;
     color: #555;
-    width: 180px;
-    z-index: 10;
-    position: relative;
-    &:after
-
-{
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-left: 67px solid transparent;
-    border-right: 67px solid transparent;
-    border-top: 6px solid #d2d2d2;
+    min-width: 100px; /* Minimum width for the tooltip */
+    text-align: center;
+    /* width: 180px; /* Width can be auto or min/max based */
+    position: relative; /* Needed for the pseudo-element arrow */
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    display: flex; /* Use flex for internal layout */
 }
 
-}
+    /* Arrow pointing down from the tooltip */
+    /* Corrected syntax for ::after pseudo-element */
+    .range::after {
+        content: '';
+        position: absolute;
+        top: 100%; /* Position below the box */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent; /* Left side of triangle */
+        border-right: 6px solid transparent; /* Right side of triangle */
+        border-top: 6px solid #d2d2d2; /* Triangle pointing down (border color matches box border) */
+    }
+    /* Inner white part of the arrow to cover the box's bottom border */
+    .range::before {
+        content: '';
+        position: absolute;
+        top: calc(100% - 1px); /* Position slightly overlapping the ::after border */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #fff; /* White triangle */
+        z-index: 1; /* Ensure it's above the border triangle */
+    }
+
 
 .range-value {
-    width: 90px;
-    padding: 8px 0;
+    /* width: 90px; /* Let flexbox handle width */
+    flex: 1; /* Take available space */
+    padding: 8px 10px; /* Padding inside the value display */
     text-align: center;
-    display: inline-block;
+    display: inline-block; /* Keep inline-block characteristics if needed, but flex item handles layout */
     transition: background 0.1s;
 }
 
+/* Divider line inside the tooltip (if needed, e.g., for min/max) */
 .range-divider {
     width: 1px;
-    display: inline-block;
-    &:after
-
-{
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 1px;
-    height: 100%;
-    background: #d2d2d2;
-    content: '';
+    background: #d2d2d2; /* Direct background color */
+    /* Removed pseudo-element approach for simplicity */
+    margin: 4px 0; /* Vertical margin to not touch top/bottom */
+    display: inline-block; /* Needs display */
 }
 
-}
-
+/* Optional alert indicator next to the range */
 .range-alert {
-    width: 26px;
+    /* width: 26px; /* Adjust as needed */
+    padding: 0 5px; /* Use padding */
     height: 16px;
-    position: relative;
+    position: relative; /* Position relative to its flex container */
     top: 50%;
-    right: 0;
     transform: translateY(-50%);
-    background: #fff;
+    /* right: 0; /* Position controlled by flex order or margin */
+    background: #eee; /* Slightly different background */
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
     border: 1px solid #d2d2d2;
+    border-left: none; /* Remove left border if attached */
     color: #0E0E0E;
+    font-size: 11px;
     line-height: 15px;
-    transition: right 0.2s;
-    &.active
-
-{
-    right: -15px;
+    transition: right 0.2s; /* Example transition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-}
+    /* Example active state for the alert */
+    /* Corrected syntax for .active class */
+    .range-alert.active {
+        /* right: -15px; /* Example active state positioning */
+        background-color: #ffdddd; /* Example active background */
+        color: #cc0000; /* Example active color */
+    }
 
-//to hide
+/* --- Utility Class --- */
 .hide {
-    display: none;
+    display: none !important; /* Use !important cautiously, only if necessary to override */
 }
