@@ -20,7 +20,6 @@
 
 				@foreach (var item in Model.BrandList as IEnumerable<string>)
 				{
-
 					<option value="@item">@item</option>
 				}
 			</select>
@@ -75,7 +74,7 @@
 			<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
 			<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
 
-			<div class="wrapper my-4">
+			<div class="wrapper">
 				<div class="container">
 					<div id="slider-wrapper">
 						<div id="slider-range"></div>
@@ -298,4 +297,47 @@
 	</div>
 </div>
 
-<script src="~/js/Vehicles.js"></script>
+<script>
+	$(function () {
+		const selected = "@Html.Raw(Model.Query.MultiFilter)";
+		if (selected) {
+			const values = selected.split(",");
+			$("#MultiSelectFilter").val(values).trigger("change");
+		}
+
+		$("#MultiSelectFilter").select2({
+			placeholder: "Select Brands",
+			allowClear: true
+		});
+
+		// Multi-select hidden value
+		$("#filterForm").on("submit", function () {
+			var selectedBrands = $("#MultiSelectFilter").val();
+			$("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
+
+			// Search text
+			$("#SearchTerm").val($("#SearchBox").val());
+		});
+
+		// Handle Filter Form Submission
+	$("#filterForm").on("submit", function () {
+		// 1. Update Hidden Field for Multi-Select Brands
+		var selectedBrands = $("#MultiSelectFilter").val();
+		$("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
+
+		// 2. Update Hidden Field for Selected Colors
+		const selectedColours = [];
+		$(".color-checkbox:checked").each(function () {
+			selectedColours.push($(this).val());
+		});
+		$("#ColoursListHidden").val(selectedColours.join(","));
+
+
+		$("#SearchTerm").val($("#SearchBox").val());
+
+	});
+
+
+	});
+
+</script>

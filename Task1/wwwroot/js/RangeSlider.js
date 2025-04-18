@@ -1,47 +1,61 @@
 ﻿$(function () {
-    // Initialize values from hidden fields or defaults
-    var minVal = $('#minPrice').val() ? parseInt($('#minPrice').val()) : 200000;
-    var maxVal = $('#maxPrice').val() ? parseInt($('#maxPrice').val()) : 200000000;
+    // Default min/max values
+    var minDefault = 200000;
+    var maxDefault = 200000000;
 
+    // Get values from hidden fields or use defaults
+    var minVal = $('#minPrice').val() ? parseInt($('#minPrice').val()) : minDefault;
+    var maxVal = $('#maxPrice').val() ? parseInt($('#maxPrice').val()) : maxDefault;
+
+    // Set values back to hidden fields to ensure they're initialized
     $('#minPrice').val(minVal);
     $('#maxPrice').val(maxVal);
 
-    // Initialize jQuery UI slider
+    // Initiate jQuery UI slider
     $('#slider-range').slider({
         range: true,
-        min: 200000,
-        max: 200000000,
+        min: minDefault,
+        max: maxDefault,
         step: 100,
         values: [minVal, maxVal],
         slide: function (event, ui) {
-            // Update displayed values
+            // Format and show selected range
             $('.range').html(
                 '<span class="range-value"><sup>₹</sup>' + formatCurrency(ui.values[0]) + '</span>' +
                 '<span class="range-divider"></span>' +
                 '<span class="range-value"><sup>₹</sup>' + formatCurrency(ui.values[1]) + '</span>'
             );
 
-            // Update hidden fields for form submission
+            // Update hidden inputs
             $('#minPrice').val(ui.values[0]);
             $('#maxPrice').val(ui.values[1]);
 
-            // Show "+" alert if price hits threshold
-            $('.range-alert').toggleClass('active', ui.values[1] === 110000);
+            // Toggle alert if max value hits 110000
+            if (ui.values[1] === 110000) {
+                $('.range-alert').addClass('active');
+            } else {
+                $('.range-alert').removeClass('active');
+            }
         }
     });
 
-    // Set initial range display
+    // Display initial range
     $('.range').html(
         '<span class="range-value"><sup>₹</sup>' + formatCurrency(minVal) + '</span>' +
         '<span class="range-divider"></span>' +
         '<span class="range-value"><sup>₹</sup>' + formatCurrency(maxVal) + '</span>'
     );
 
-    // Move display inside slider range area
+    // Move range display into slider
     $('.ui-slider-range').append($('.range-wrapper'));
 
-    // Prevent accidental drag from clicking inside display
+    // Prevent drag interference when clicking on range display
     $('.range, .range-alert').on('mousedown', function (event) {
         event.stopPropagation();
     });
 });
+
+// Utility to format number with commas
+function formatCurrency(value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
