@@ -20,7 +20,7 @@ namespace Task1.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(QueryDTO query)
+        public async Task<IActionResult> Index([FromQuery] QueryDTO query)
         {
             Console.WriteLine("Rating is " + query.Rating);
             IEnumerable<Brands> brands = await _UOFInstance._brandsRepository.GetAll();

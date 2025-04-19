@@ -9,7 +9,7 @@
 
 	<!-- Filter Form -->
 	<form id="filterForm" asp-action="Index" asp-controller="Vehicles" method="get" class="mb-2">
-		<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
+		<input type="hidden" name="PageSize" value="@Model.Query.PageSize" />
 		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
 		<div class="d-flex gap-3 align-items-center flex-wrap">
 
@@ -106,7 +106,7 @@
 
 
 		</div>
-		<center><button type="submit" class="btn btn-sm btn-primary">Filter</button></center>
+		<center><button type="submit" class="btn btn-sm btn-primary" id="FilterBtn">Filter</button></center>
 
 	</form>
 	<br />
@@ -299,77 +299,132 @@
 
 <script>
 	$(function () {
-		const selected = "@Html.Raw(Model.Query.MultiFilter)";
-		if (selected) {
-			const values = selected.split(",");
-			$("#MultiSelectFilter").val(values).trigger("change");
+
+
+		// Main initialization function
+		function initializeFilters() {
+			setupMultiSelect();
+			setupFormSubmission();
+			setupModalHandling();
+			QueryData();
+
 		}
 
-		$("#MultiSelectFilter").select2({
-			placeholder: "Select Brands",
-			allowClear: true
-		});
+		// Initialize MultiSelect filter
+		function setupMultiSelect() {
+			const selected = "@Html.Raw(Model.Query.MultiFilter)";
+			if (selected) {
+				const values = selected.split(",");
+				$("#MultiSelectFilter").val(values).trigger("change");
+			}
 
-		// Multi-select hidden value
-		$("#filterForm").on("submit", function () {
-			var selectedBrands = $("#MultiSelectFilter").val();
+			$("#MultiSelectFilter").select2({
+				placeholder: "Select Brands",
+				allowClear: true
+			});
+		}
+
+		// Handle form submission
+		function setupFormSubmission() {
+			$("#filterForm").on("submit", function () {
+				updateMultiSelectHidden();
+				updateColorsHidden();
+				updateSearchTerm();
+				QueryData();
+			});
+		}
+
+		function QueryData (){
+			const queryData = {
+				"Query.PageSize": $("#filterForm input[name='Query.PageSize']").val() || "@Model.Query.PageSize",
+				"Query.SearchTerm": $("#filterForm input[name='Query.SearchTerm']").val() || "",
+				"Query.SingleFilter": $("#filterForm select[name='Query.SingleFilter']").val() || "",
+				"Query.MultiFilter": $("#MultiFilterHidden").val() || "",
+				"Query.StockAvail": $("#filterForm input[name='Query.StockAvail']:checked").val() || "",
+				"Query.ColoursList": $("#ColoursListHidden").val() || "",
+				"Query.MinPrice": $("#minPrice").val() || "@Model.Query.MinPrice",
+				"Query.MaxPrice": $("#maxPrice").val() || "@Model.Query.MaxPrice",
+				"Query.Rating": $("#filterForm input[name='Query.Rating']").val() || "@Model.Query.Rating",
+				"Query.PageNumber": "@Model.Query.PageNumber", "Query.SortColumn": "@Model.Query.SortColumn",
+				"Query.SortDirection": "@Model.Query.SortDirection"
+			};
+			console.log(queryData);
+
+			return queryData
+			// Set up the Query data
+		}
+
+		// Send request and load data with the Ajax including filtters and search data
+		function SendRequest(){
+			$.ajax({
+				url:"Vehicles/Index",
+				method: "get",
+				data: QueryData(),
+				success: function(response){
+					console.log("The data is fetched");
+				},
+				error: function(xhr, status, error){
+					console.error('AJAX request failed:', status, error);
+				}
+
+			})
+
+
+
+		}
+
+		// Update multi-select hidden field
+		function updateMultiSelectHidden() {
+			const selectedBrands = $("#MultiSelectFilter").val();
 			$("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
+		}
 
-			// Search text
-			$("#SearchTerm").val($("#SearchBox").val());
-		});
-
-		// Handle Filter Form Submission
-		$("#filterForm").on("submit", function () {
-			// 1. Update Hidden Field for Multi-Select Brands
-			var selectedBrands = $("#MultiSelectFilter").val();
-			$("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
-
-			// 2. Update Hidden Field for Selected Colors
+		// Update colors hidden field
+		function updateColorsHidden() {
 			const selectedColours = [];
 			$(".color-checkbox:checked").each(function () {
 				selectedColours.push($(this).val());
 			});
 			$("#ColoursListHidden").val(selectedColours.join(","));
+		}
 
-
+		// Update search term
+		function updateSearchTerm() {
 			$("#SearchTerm").val($("#SearchBox").val());
+		}
 
-		});
+		// Handle modal operations
+		function setupModalHandling() {
+			$('.open-modal').click(function (e) {
+				e.preventDefault();
+				const vehicleId = $(this).data('vehicleid');
+				openVehicleModal(vehicleId);
+			});
+		}
 
+		// Open and populate vehicle details modal
+		function openVehicleModal(vehicleId) {
+			console.log('Vehicle id clicked:', vehicleId);
+			const modal = $('#vehicleDetailsModal');
+			const modalBody = modal.find('.modal-body');
 
-		
-    // --- Modal Opening Logic ---
-    $('.open-modal').click(function (e) {
-        e.preventDefault(); // Prevent default link behavior
+			modalBody.html('<p>Loading details...</p>');
+			modal.modal('show');
 
-        // Get the vehicle ID from the data attribute
-        var vehicleId = $(this).data('vehicleid');
-        console.log('Vehicle id clicked:', vehicleId);
+			$.get('@Url.Action("Details", "Vehicles")', { id: vehicleId })
+				.done(function (data) {
+					modalBody.html(data);
+				})
+				.fail(function () {
+					modalBody.html('<p class="text-danger">Error loading vehicle details. Please try again later.</p>');
+					console.error('AJAX request failed for vehicle details:', vehicleId);
+				});
+		}
 
-        // Get references to the modal and its body
-        var modal = $('#vehicleDetailsModal');
-        var modalBody = modal.find('.modal-body');
-
-        // Clear previous content (optional, good practice)
-        modalBody.html('<p>Loading details...</p>'); // Show a loading message
-
-        // Show the modal
-        modal.modal('show');
-
-        // Make AJAX request to get vehicle details
-        $.get('@Url.Action("Details", "Vehicles")', { id: vehicleId })
-            .done(function (data) {
-                // Success: Load the returned HTML into the modal body
-                modalBody.html(data);
-            })
-            .fail(function () {
-
-                modalBody.html('<p class="text-danger">Error loading vehicle details. Please try again later.</p>');
-                console.error('AJAX request failed for vehicle details:', vehicleId);
-            });
-    });
-
+		// Initialize everything
+		initializeFilters();
 	});
+
+
 
 </script>
