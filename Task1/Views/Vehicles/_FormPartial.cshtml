@@ -1,0 +1,131 @@
+﻿@using Task1.DTO;
+@model Task1.ViewModel.VehicleViewModel
+
+<div class="container" style="text-align:left;">
+
+	<!-- Filter Form -->
+	<form method="get" class="mb-2">
+		<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
+		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
+		<div class="d-flex gap-3 align-items-center flex-wrap">
+
+
+			@Html.DropDownListFor(model => model.Query.SingleFilter, Model.CategoryList, new { @class = "form-select form-select-sm w-auto", @id="SingleFilter" })
+
+			<select id="MultiSelectFilter" multiple class="form-control" style="width:20%">
+
+				@foreach (var item in Model.BrandList as IEnumerable<string>)
+				{
+					<option value="@item">@item</option>
+				}
+			</select>
+
+			<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
+
+			<!--Radio button-->
+			<div class="d-flex flex-column m-2 p-3">
+
+				@foreach (StockAvailability value in Enum.GetValues(typeof(StockAvailability)))
+				{
+					var isChecked = Model.Query.StockAvail == value;
+					<span class="p-2">
+						<input 
+								class="StockAvail"
+								type="radio"
+							   name="Query.StockAvail"
+							   id="@value"
+							   value="@value"
+						@(isChecked ? "checked" : "") />
+						<label for="@value" style="width:fit-content;">@value.GetDescription()</label>
+					</span>
+				}
+			</div>
+
+			<!-- CheckBox button-->
+			<div class="Checkbox">
+				<div class="check-group">
+
+					@for (int i = 0; i < Model.ColoursOptionList.Count; i++)
+					{
+						var item = Model.ColoursOptionList[i];
+						var isChecked = Model.Query.ColoursList != null && Model.Query.ColoursList.Contains(item);
+
+						<span class="checkbox" for="colorCheckbox_@i">
+							<input class="checkbox__input color-checkbox"
+								   type="checkbox"
+								   value="@item"
+								   id="colorCheckbox_@i"
+							@(isChecked ? "checked" : "") />
+
+							<span class="checkbox__label">@item</span>
+						</span>
+					}
+
+					<!-- This is the field that will be submitted -->
+					<input type="hidden" id="ColoursListHidden" name="Query.ColoursList" value="" />
+
+					<div class="check-group__result">Options chosen:</div>
+				</div>
+			</div>
+
+			<!-- Range Slider -->
+			<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
+			<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
+
+			<div class="wrapper">
+				<div class="container">
+					<div id="slider-wrapper">
+						<div id="slider-range"></div>
+						<div class="range"></div>
+
+						<div class="range-wrapper">
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+
+			<!-- Rating filter  -->
+			<div class="Rating-Filtter">
+
+				<label class="rating-label">
+					<input class="rating"
+						   id="RatingValue"
+						   max="5"
+						   name="Query.Rating"
+						   oninput="this.style.setProperty('--value', this.value)"
+						   step="1"
+						   style="--stars:5;--value:@Model.Query.Rating"
+						   type="range"
+						   value="@Model.Query.Rating">
+				</label>
+
+			</div>
+
+
+		</div>
+		<center><button class="btn btn-sm btn-primary" id="FilterBtn">Filter</button></center>
+
+	</form>
+	<br />
+	<!-- Search Form -->
+	<form asp-action="Index" asp-controller="Vehicles" method="get" class="mb-4">
+		<div class="input-group mx-auto" style="width:70%;">
+			<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
+			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
+			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
+			<input type="hidden" name="Query.ColoursList" value="@Model.Query.ColoursList" />
+			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
+			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
+			<input type="hidden" name="Query.Rating" value="@Model.Query.Rating" />
+			<input type="hidden" name="Query.StockAvail" value="@Model.Query.StockAvail" />
+
+			<input type="text" class="form-control" placeholder="Search..." name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
+			<button class="btn btn-outline-secondary" type="submit">
+				<i class="bi bi-search"></i>
+			</button>
+		</div>
+
+	</form>
+</div>

@@ -50,7 +50,7 @@ namespace Task1.Controllers
                  new SelectListItem{Text="20", Value="20"},
             };
 
-            PageList.FirstOrDefault(p => p.Value == query.PageSize.ToString())!.Selected = true;
+            //PageList.FirstOrDefault(p => p.Value == query.PageSize.ToString())!.Selected = true;
 
             var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice, query.StockAvail.ToString() ?? "All", query.ColoursList ?? "", query.Rating);
             int TotalRecords = result.TotalPages;
@@ -68,8 +68,21 @@ namespace Task1.Controllers
                 PageSizeList = PageList
             };
 
-            ViewBag.SelectedValues = viewModel.Query.MultiFilter;
-            return View(viewModel);
+            //ViewBag.SelectedValues = viewModel.Query.MultiFilter;
+
+            // Check if the request is AJAX (jQuery adds this header by default)
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                // If AJAX, return ONLY the partial view containing the results
+                // Ensure "_VehiclesPartial" is the correct name of your partial view
+                // that holds the table and pagination.
+                return PartialView("_VehiclesPartial", viewModel);
+            }
+            else
+            {
+                // If not AJAX (initial page load), return the full view
+                return View(viewModel);
+            }
 
         }
         [HttpGet]

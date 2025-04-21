@@ -1,0 +1,187 @@
+﻿$(function () {
+
+
+    $("#FilterBtn").on('click', function (e) {
+        e.preventDefault();
+
+        const queryData = QueryData();
+        const queryString = buildQueryString(queryData);
+
+        // Update URL in browser (without reloading the page)
+        const newUrl = window.location.pathname + '?' + queryString;
+        window.history.replaceState(null, '', newUrl);
+        $("body").addClass("loading");
+        // Make the AJAX call with the same query string
+        sendAjaxRequest("Vehicles/Index", "GET", queryData, function (data) {
+            console.log("The data is loaded", data);
+            $("#vehicleResultsContainer").html(data);
+
+            $("body").removeClass("loading");
+        }, function () {
+            console.log("Something went wrong");
+
+            $("body").removeClass("loading");
+        });
+    });
+
+    function buildQueryString(params) {
+        return Object.keys(params)
+            .filter(key => params[key] !== null && params[key] !== "" && params[key] !== undefined)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+            .join('&');
+    }
+
+    //Sorting filtter 
+    $(document).on("click", ".sorting-filter", function () {
+
+        const column = $(this).data("sort-column");
+        let direction = $("#SortDirection").val() || "ASC";
+
+        const currentSortColumn = $("#SortColumn").val();
+        if (currentSortColumn === column) {
+            direction = (direction === "ASC") ? "DESC" : "ASC";
+        } else {
+            direction = "ASC";
+        }
+
+        $("#SortColumn").val(column);
+        $("#SortDirection").val(direction);
+
+        const queryData = QueryData();
+        const queryString = buildQueryString(queryData);
+
+        console.log("The Query ", queryString);
+
+        // Update URL in browser (without reloading the page)
+        const newUrl = window.location.pathname + '?' + queryString;
+        window.history.replaceState(null, '', newUrl);
+        $("body").addClass("loading");
+
+        sendAjaxRequest("Vehicles/Index", "GET", queryData, function (data) {
+            console.log("The data is loaded", data);
+            $("#vehicleResultsContainer").html(data);
+
+            $("body").removeClass("loading");
+        }, function () {
+            console.log("Something went wrong");
+
+            $("body").removeClass("loading");
+        });
+
+
+    });
+
+    // Main initialization function
+    function initializeFilters() {
+        setupFormSubmission();
+        setupModalHandling();
+        updateColorsHidden();
+
+        // Update hidden field on checkbox change
+        $('.color-checkbox').on('change', function () {
+            updateColorsHidden();
+        });
+
+    }
+
+    // Handle form submission preparation
+    function setupFormSubmission() {
+        const $multiSelect = $("#MultiSelectFilter");
+
+        $multiSelect.select2({
+            placeholder: "Select Brands",
+            allowClear: true,
+        });
+
+        const selectedValueString = $("#MultiFilterHidden").val();
+        if (selectedValueString && selectedValueString.length > 0) {
+            const valuesArray = selectedValueString.split(",").map(item => item.trim());
+            $multiSelect.val(valuesArray).trigger('change.select2');
+        }
+
+        $multiSelect.on('change', function () {
+            const selectedBrands = $("#MultiSelectFilter").val();
+            $("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
+        });
+
+    }
+
+    // Update colors hidden field
+    function updateColorsHidden() {
+        const selectedColours = [];
+        $(".color-checkbox:checked").each(function () {
+            selectedColours.push($(this).val());
+        });
+        $("#ColoursListHidden").val(selectedColours.join(","));
+        $('.check-group__result').text('Options chosen: ');
+    }
+
+    // Handle modal interactions
+    function setupModalHandling() {
+        $(document).on('click', '.open-modal', function (e) {
+            e.preventDefault();
+            const vehicleId = $(this).data('vehicleid');
+            openVehicleModal(vehicleId);
+        });
+    }
+
+    // Open vehicle details modal with AJAX
+    function openVehicleModal(vehicleId) {
+        const modal = $('#vehicleDetailsModal');
+        const modalBody = modal.find('.modal-body');
+
+        modalBody.html('<p>Loading details...</p>');
+        modal.modal('show');
+
+        sendAjaxRequest("Vehicles/Details", "GET", { id: vehicleId }, function (data) {
+            modalBody.html(data);
+        }, function () {
+            modalBody.html('<p class="text-danger">Error loading vehicle details.</p>');
+        });
+    }
+    function QueryData() {
+        updateColorsHidden();
+        setupFormSubmission();
+        const $filterForm = $("#filterForm");
+
+        const queryData = {
+            "PageSize": parseInt($("#PageSize").val()) || null,
+            "SearchTerm": $filterForm.find('input[name="Query.SearchTerm"]').val() || "",
+            "SingleFilter": $("#SingleFilter").val() || "",
+            "MultiFilter": $("#MultiFilterHidden").val() || "",
+            "StockAvail": $("input[name='Query.StockAvail']:checked").val() || "",
+            "ColoursList": $("#ColoursListHidden").val() || "",
+            "MinPrice": parseInt($("#minPrice").val()) || null,
+            "MaxPrice": parseInt($("#maxPrice").val()) || null,
+            "Rating": parseInt($("#RatingValue").val()) || null,
+            "SortColumn": $("#SortColumn").val() || "",
+            "SortDirection": $("#SortDirection").val() || "ASC"
+
+        };
+
+        return queryData;
+    }
+
+
+    // Reusable AJAX Request
+    function sendAjaxRequest(url, method = "GET", data = {}, successCallback = null, errorCallback = null) {
+        console.log("The ajax is call for the url ", url);
+        $.ajax({
+            url: url,
+            type: method,
+            data: data,
+            success: function (response) {
+                console.log("AJAX data fetched successfully.");
+                if (typeof successCallback === 'function') successCallback(response);
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error:", status, error);
+                console.error("Response Text:", xhr.responseText);
+                if (typeof errorCallback === 'function') errorCallback(xhr, status, error);
+            }
+
+        });
+    }
+    // Init on ready
+    initializeFilters();
+});

@@ -40,7 +40,7 @@ namespace Task1
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Vehicles}/{action=Index}/{id?}");
 
             app.Run();
         }

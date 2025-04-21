@@ -1,0 +1,175 @@
+﻿@* @using Task1.DTO; *@
+@model Task1.ViewModel.VehicleViewModel
+
+
+<div class="container" id="vehicleResultsContainer" style=" text-align:left;">
+
+	<!-- Vehicles Table -->
+	<div class="table-res">
+		<table class="table table-bordered table-hover align-middle text-center">
+			<thead class="table-primary">
+				<tr>
+					<input type="hidden" id="SortColumn" name="Query.SortColumn" value="@Model.Query.SortColumn" />
+					<input type="hidden" id="SortDirection" name="Query.SortDirection" value="@Model.Query.SortDirection" />
+
+
+					@foreach (var column in new[] { "Name", "ModelYear", "Price", "Rating" })
+					{
+						<th class="text-start" style="width: 5%">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<span>@column</span>
+								<a class="btn btn-sm p-0 border-0 bg-transparent sorting-filter"
+								   data-sort-column="@column"
+								   data-sort-direction="@(Model.Query.SortColumn == column && Model.Query.SortDirection == "ASC" ? "DESC" : "ASC")">
+									<i class="bi @(Model.Query.SortDirection == "ASC" ? "bi-sort-up" : "bi-sort-down")"></i>
+								</a>
+							</div>
+						</th>
+					}
+					<th class="text-center">Description</th>
+					<th class="text-center">Category</th>
+					<th class="text-center">Brand</th>
+					<th class="text-center">Quantity</th>
+					<th class="text-center">Colours Available</th>
+
+					<th class="text-center">Action</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@if (Model.Vehicles.Any())
+				{
+					foreach (var vehicle in Model.Vehicles)
+					{
+						<tr>
+							<td>@vehicle.Name</td>
+							<td>@vehicle.ModelYear</td>
+							<td>₹@Math.Floor(vehicle.Price)</td>
+							<td>
+								@for (int i = 1; i <= 5; i++)
+								{
+									if (i <= vehicle.Rating)
+									{
+										<span class="text-warning">&#9733;</span>
+									}
+									else
+									{
+										<span class="text-muted">&#9734;</span>
+									}
+								}
+							</td>
+							<td class="text-start">@vehicle.Description</td>
+							<td>@vehicle.CategoryName</td>
+							<td>@vehicle.BrandName</td>
+							<td>@vehicle.Quantity</td>
+							<td>@vehicle.ColoursNames</td>
+							<td class="d-flex flex-column">
+
+								<a asp-action="Edit" asp-controller="Vehicles" asp-route-Id="@vehicle.Id" title="Delete">
+									<i class="bi bi-pencil-square"></i>
+								</a>
+
+								<a class="text-primary me-2 open-modal" data-VehicleId="@vehicle.Id" title="Details">
+									<i class="bi bi-list"></i>
+								</a>
+
+								<a asp-action="Delete" asp-controller="Vehicles" asp-route-Id="@vehicle.Id" class="text-danger" title="Delete">
+									<i class="bi bi-trash3-fill"></i>
+								</a>
+
+							</td>
+						</tr>
+					}
+				}
+				else
+				{
+					<tr>
+						<td colspan="8" class="text-muted text-center">No results found.</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<!-- Pagination + Page Size -->
+	<div class="d-flex justify-content-between align-items-end mt-4 flex-wrap gap-3">
+		<nav>
+			@* <input type="hidden" value="@Model.Query.PageNumber" id="PageNumber" /> *@
+			<ul class="pagination pagination-sm mb-0">
+				<!-- Previous -->
+				<li class="page-item @(Model.Query.PageNumber <= 1 ? "disabled" : "")">
+					<a class="page-link"
+					   asp-all-route-data="@Model.Query.ToDictionary()"
+					   asp-route-Query.PageNumber="@Model.Query.PageNumber - 1">
+						Previous
+					</a>
+				</li>
+				<li class="page-item @(Model.Query.PageNumber == 1 ? "active" : "")">
+					<a class="page-link"
+					   asp-all-route-data="@Model.Query.ToDictionary()"
+					   asp-route-Query.PageNumber="1">
+						1
+					</a>
+				</li>
+				@if (Model.TotalPages > 1)
+				{
+
+					<li class="page-item @(Model.Query.PageNumber == Model.TotalPages ? "active" : "")">
+						<a class="page-link"
+						   asp-all-route-data="@Model.Query.ToDictionary()"
+						   asp-route-Query.PageNumber="@Model.TotalPages">
+							@Model.TotalPages
+						</a>
+					</li>
+				}
+				<li class="page-item @(Model.Query.PageNumber >= Model.TotalPages ? "disabled" : "")">
+					<a class="page-link"
+					   asp-all-route-data="@Model.Query.ToDictionary()"
+					   asp-route-Query.PageNumber="@(Model.Query.PageNumber + 1)">
+						Next
+					</a>
+				</li>
+			</ul>
+		</nav>
+
+		<form method="get" class="d-flex align-items-center">
+			<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
+			<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
+			<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
+			<input type="hidden" name="Query.ColoursList" value="@Model.Query.ColoursList" />
+			<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
+			<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
+			<input type="hidden" name="Query.Rating" value="@Model.Query.Rating" />
+
+
+
+			<input type="hidden" name="Query.StockAvail" value="@Model.Query.StockAvail" />
+
+			<label class="me-2 mb-0">Page Size:</label>
+			@Html.DropDownList("Query.PageSize", (List<SelectListItem>)Model.PageSizeList,
+							new { @class = "form-select form-select-sm w-auto me-2", @id = "PageSize", onchange = "this.form.submit();" })
+
+		</form>
+	</div>
+</div>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="vehicleDetailsModal" tabindex="-1" role="dialog" aria-labelledby="vehicleDetailsModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="vehicleDetailsModalLabel">Vehicle Details</h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body" id="modalBody">
+				<!-- Details will be loaded here via AJAX -->
+				<p>Loading...</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
