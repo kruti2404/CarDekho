@@ -1,37 +1,21 @@
 ﻿$(function () {
 
-
+    //FiltterForm Submission 
     $("#FilterBtn").on('click', function (e) {
         e.preventDefault();
 
-        const queryData = QueryData();
-        const queryString = buildQueryString(queryData);
-
-        // Update URL in browser (without reloading the page)
-        const newUrl = window.location.pathname + '?' + queryString;
-        window.history.replaceState(null, '', newUrl);
-        $("body").addClass("loading");
-        // Make the AJAX call with the same query string
-        sendAjaxRequest("Vehicles/Index", "GET", queryData, function (data) {
-            console.log("The data is loaded", data);
-            $("#vehicleResultsContainer").html(data);
-
-            $("body").removeClass("loading");
-        }, function () {
-            console.log("Something went wrong");
-
-            $("body").removeClass("loading");
-        });
+        SendRequest("Vehicles/Index");
     });
 
-    function buildQueryString(params) {
-        return Object.keys(params)
-            .filter(key => params[key] !== null && params[key] !== "" && params[key] !== undefined)
-            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
-            .join('&');
-    }
+    $("#RemoveFilter").on('click', function (e) {
+        e.preventDefault();
+        console.log("Remove Filter is applied");
+        window.location.href = '/Vehicles/Index';
 
-    //Sorting filtter 
+    });
+
+
+    //Sorting filtter handle
     $(document).on("click", ".sorting-filter", function () {
 
         const column = $(this).data("sort-column");
@@ -47,40 +31,26 @@
         $("#SortColumn").val(column);
         $("#SortDirection").val(direction);
 
-        const queryData = QueryData();
-        const queryString = buildQueryString(queryData);
-
-        console.log("The Query ", queryString);
-
-        // Update URL in browser (without reloading the page)
-        const newUrl = window.location.pathname + '?' + queryString;
-        window.history.replaceState(null, '', newUrl);
-        $("body").addClass("loading");
-
-        sendAjaxRequest("Vehicles/Index", "GET", queryData, function (data) {
-            console.log("The data is loaded", data);
-            $("#vehicleResultsContainer").html(data);
-
-            $("body").removeClass("loading");
-        }, function () {
-            console.log("Something went wrong");
-
-            $("body").removeClass("loading");
-        });
+        SendRequest("Vehicles/Index");
 
 
     });
 
-    // Main initialization function
+    //SearchFilter submission
+    $("#SearchFilter").on("click", function (e) {
+        console.log("The search is entered ");
+        e.preventDefault();
+
+        SendRequest("Vehicles/Index");
+
+
+    });
+
+    // initialization function
     function initializeFilters() {
         setupFormSubmission();
         setupModalHandling();
         updateColorsHidden();
-
-        // Update hidden field on checkbox change
-        $('.color-checkbox').on('change', function () {
-            updateColorsHidden();
-        });
 
     }
 
@@ -98,11 +68,17 @@
             const valuesArray = selectedValueString.split(",").map(item => item.trim());
             $multiSelect.val(valuesArray).trigger('change.select2');
         }
-
+        //Multi select change to reflect hidden field
         $multiSelect.on('change', function () {
             const selectedBrands = $("#MultiSelectFilter").val();
             $("#MultiFilterHidden").val(selectedBrands ? selectedBrands.join(",") : "");
         });
+
+        // hidden field on checkbox change
+        $('.color-checkbox').on('change', function () {
+            updateColorsHidden();
+        });
+
 
     }
 
@@ -140,13 +116,10 @@
         });
     }
     function QueryData() {
-        updateColorsHidden();
-        setupFormSubmission();
-        const $filterForm = $("#filterForm");
 
         const queryData = {
             "PageSize": parseInt($("#PageSize").val()) || null,
-            "SearchTerm": $filterForm.find('input[name="Query.SearchTerm"]').val() || "",
+            "SearchTerm": $("#filterForm").find('input[name="Query.SearchTerm"]').val() || "",
             "SingleFilter": $("#SingleFilter").val() || "",
             "MultiFilter": $("#MultiFilterHidden").val() || "",
             "StockAvail": $("input[name='Query.StockAvail']:checked").val() || "",
@@ -155,8 +128,8 @@
             "MaxPrice": parseInt($("#maxPrice").val()) || null,
             "Rating": parseInt($("#RatingValue").val()) || null,
             "SortColumn": $("#SortColumn").val() || "",
-            "SortDirection": $("#SortDirection").val() || "ASC"
-
+            "SortDirection": $("#SortDirection").val() || "ASC",
+            "SearchTerm": $("#SeachHolder").val() || ""
         };
 
         return queryData;
@@ -182,6 +155,38 @@
 
         });
     }
+
+    function buildQueryString(params) {
+        return Object.keys(params)
+            .filter(key => params[key] !== null && params[key] !== "" && params[key] !== undefined)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+            .join('&');
+    }
+
+
+    function SendRequest(url) {
+        const queryData = QueryData();
+        const queryString = buildQueryString(queryData);
+
+        // Update URL in browser (without reloading the page)
+        const newUrl = window.location.pathname + '?' + queryString;
+        window.history.replaceState(null, '', newUrl);
+        $("body").addClass("loading");
+
+        sendAjaxRequest(url, "GET", queryData, function (data) {
+            console.log("The data is loaded", data);
+            $("#vehicleResultsContainer").html(data);
+
+            $("body").removeClass("loading");
+        }, function () {
+            console.log("Something went wrong");
+
+            $("body").removeClass("loading");
+        });
+
+    }
+
+
     // Init on ready
     initializeFilters();
 });
