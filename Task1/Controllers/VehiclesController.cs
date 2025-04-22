@@ -1,7 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Transactions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +21,6 @@ namespace Task1.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] QueryDTO query)
         {
-            Console.WriteLine("Rating is " + query.Rating);
             IEnumerable<Brands> brands = await _UOFInstance._brandsRepository.GetAll();
             IEnumerable<Categories> categories = await _UOFInstance._categoriesRepository.GetAll();
             IEnumerable<Colours> colours = await _UOFInstance._coloursRepository.GetAll();
@@ -70,19 +66,12 @@ namespace Task1.Controllers
                 PageSizeList = PageList
             };
 
-            //ViewBag.SelectedValues = viewModel.Query.MultiFilter;
-
-            // Check if the request is AJAX (jQuery adds this header by default)
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                // If AJAX, return ONLY the partial view containing the results
-                // Ensure "_VehiclesPartial" is the correct name of your partial view
-                // that holds the table and pagination.
                 return PartialView("_VehiclesPartial", viewModel);
             }
             else
             {
-                // If not AJAX (initial page load), return the full view
                 return View(viewModel);
             }
 
@@ -158,7 +147,6 @@ namespace Task1.Controllers
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine($"Error deleting vehicle: {ex.Message}");
                 return View(vehicles);
             }
@@ -178,14 +166,11 @@ namespace Task1.Controllers
             {
                 return NotFound();
             }
-            var brandList = (await _UOFInstance._brandsRepository.GetAll()).Select(brd => brd.Name);
-            result.BrandList = brandList;
+            result.BrandList = (await _UOFInstance._brandsRepository.GetAll()).Select(brd => brd.Name);
 
-            var categoriesList = (await _UOFInstance._categoriesRepository.GetAll()).Select(clg => clg.Name);
-            result.CategoriesList = categoriesList;
+            result.CategoriesList = (await _UOFInstance._categoriesRepository.GetAll()).Select(clg => clg.Name);
 
-            var ColoursList = (await _UOFInstance._coloursRepository.GetAll()).Select(clr => clr.Name);
-            result.ColoursList = ColoursList;
+            result.ColoursList = (await _UOFInstance._coloursRepository.GetAll()).Select(clr => clr.Name);
 
             var Stocks = (await _UOFInstance._stocksRepository.GetAll()).FirstOrDefault(stk => stk.VehicleId == result.VehicleId);
             result.Quantity = Stocks.Quantity;
@@ -197,6 +182,7 @@ namespace Task1.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(VehicleForm vehicle)
         {
+
             if (vehicle.VehicleId == 0 || vehicle == null || vehicle.VehicleId != vehicle.VehicleId)
             {
                 return NotFound();
@@ -204,10 +190,13 @@ namespace Task1.Controllers
 
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("Values of quantity" + vehicle.Quantity);
-                Console.WriteLine("Hereeeee");
+                Console.WriteLine("Model state is not valid " + vehicle.BrandList);
+                vehicle.BrandList = (await _UOFInstance._brandsRepository.GetAll()).Select(brd => brd.Name);
+                vehicle.CategoriesList = (await _UOFInstance._categoriesRepository.GetAll()).Select(clg => clg.Name);
+                vehicle.ColoursList = (await _UOFInstance._coloursRepository.GetAll()).Select(clr => clr.Name);
                 return View(vehicle);
             }
+            Console.WriteLine("Entered the post request");
 
             try
             {
@@ -217,17 +206,11 @@ namespace Task1.Controllers
                     return NotFound();
                 }
 
-                existingVehicle.Name = vehicle.Name;
-                Console.WriteLine("BrandName from the form " + vehicle.BrandName + " " + vehicle.CategoryName + " " + vehicle.SelectedColours);
                 var brands = (await _UOFInstance._brandsRepository.GetAll()).FirstOrDefault(brd => brd.Name == vehicle.BrandName);
-                Console.WriteLine("Brand Id is :" + brands?.Id);
-                var categories = (await _UOFInstance._categoriesRepository.GetAll()).FirstOrDefault(cat => cat.Name == vehicle.CategoryName);
-                Console.WriteLine("Category Id is :" + categories?.Id);
 
+                var categories = (await _UOFInstance._categoriesRepository.GetAll()).FirstOrDefault(cat => cat.Name == vehicle.CategoryName);
 
                 var stock = (await _UOFInstance._stocksRepository.GetAll()).FirstOrDefault(stk => stk.VehicleId == vehicle.VehicleId);
-                Console.WriteLine("Stock Id is :" + stock?.Id);
-
 
                 existingVehicle.Id = vehicle.VehicleId;
                 existingVehicle.Name = vehicle.Name;
@@ -250,11 +233,6 @@ namespace Task1.Controllers
                 {
                     existingVehicle.Colours?.Add(colour);
                 }
-                Console.WriteLine("Added Colours to the list");
-
-                //vehicle.SelectedColours are coming as csv values and existingVehicle.Colours are the ICollection<Colours>
-
-
                 await _UOFInstance.Save();
 
                 Console.WriteLine("The edit is successfull");
