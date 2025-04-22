@@ -25,7 +25,7 @@ namespace Task1.Repository
         //    return await _table.FindAsync(id);
 
         //}
-
+        virtual
         public async Task<IEnumerable<T>> GetAll()
         {
             return await _table.ToListAsync();

@@ -8,7 +8,7 @@ namespace Task1.Repository
 {
     public class unitOfWork : IUnitOfWork
     {
-        public IGenericRepository<Vehicles> _vehicleRepository { get; }
+        public VehicleRepository _vehicleRepository { get; }
         public IGenericRepository<Categories> _categoriesRepository { get; }
         public IGenericRepository<Brands> _brandsRepository { get; }
         public IGenericRepository<Colours> _coloursRepository { get; }
@@ -23,7 +23,7 @@ namespace Task1.Repository
         public unitOfWork(ProgramDbContext context)
         {
             _context = context;
-            _vehicleRepository = new GenericRepository<Vehicles>(_context);
+            _vehicleRepository = new VehicleRepository(_context);
             _categoriesRepository = new GenericRepository<Categories>(_context);
             _brandsRepository = new GenericRepository<Brands>(_context);
             _coloursRepository = new GenericRepository<Colours>(_context);

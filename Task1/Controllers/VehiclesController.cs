@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Task1.DTO;
 using Task1.Models;
 using Task1.Repository;
@@ -171,74 +173,88 @@ namespace Task1.Controllers
                 return NotFound();
             }
 
-            var result = await _UOFInstance._vehicleRepository.GetById(Id);
+            var result = await _UOFInstance._vehicleRepository.GetByIdIncludingAll(Id);
             if (result == null)
             {
                 return NotFound();
             }
-            var newVehicle = new Vehicles
-            {
-                Id = result.Id,
-                Name = result.Name,
-                ModelYear = result.ModelYear,
-                Description = result.Description,
-                Price = result.Price,
-                Rating = result.Rating,
-            };
-            return View(newVehicle);
+            var brandList = (await _UOFInstance._brandsRepository.GetAll()).Select(brd => brd.Name);
+            result.BrandList = brandList;
+
+            var categoriesList = (await _UOFInstance._categoriesRepository.GetAll()).Select(clg => clg.Name);
+            result.CategoriesList = categoriesList;
+
+            var ColoursList = (await _UOFInstance._coloursRepository.GetAll()).Select(clr => clr.Name);
+            result.ColoursList = ColoursList;
+
+            var Stocks = (await _UOFInstance._stocksRepository.GetAll()).FirstOrDefault(stk => stk.VehicleId == result.VehicleId);
+            result.Quantity = Stocks.Quantity;
+
+            return View(result);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Vehicles vehicle)
+        public async Task<IActionResult> Edit(VehicleForm vehicle)
         {
-            if (vehicle.Id == 0 || vehicle == null || vehicle.Id != vehicle.Id)
+            if (vehicle.VehicleId == 0 || vehicle == null || vehicle.VehicleId != vehicle.VehicleId)
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
+                Console.WriteLine("Values of quantity" + vehicle.Quantity);
                 Console.WriteLine("Hereeeee");
                 return View(vehicle);
             }
 
             try
             {
-                var existingVehicle = await _UOFInstance._vehicleRepository.GetById(vehicle.Id);
+                var existingVehicle = (await _UOFInstance._vehicleRepository.GetAll()).FirstOrDefault(veh => veh.Id == vehicle.VehicleId);
                 if (existingVehicle == null)
                 {
                     return NotFound();
                 }
 
                 existingVehicle.Name = vehicle.Name;
-
-                var brands = (await _UOFInstance._brandsRepository.GetAll()).FirstOrDefault(brd => brd.Name == existingVehicle.BrandName);
-                Console.WriteLine(brands?.Id);
-                var categories = (await _UOFInstance._categoriesRepository.GetAll()).FirstOrDefault(cat => cat.Name == existingVehicle.CategoryName);
-                Console.WriteLine(categories?.Id);
-
-
-                var stock = (await _UOFInstance._stocksRepository.GetAll()).FirstOrDefault(stk => stk.VehicleId == existingVehicle.Id);
-                Console.WriteLine(stock?.Id);
+                Console.WriteLine("BrandName from the form " + vehicle.BrandName + " " + vehicle.CategoryName + " " + vehicle.SelectedColours);
+                var brands = (await _UOFInstance._brandsRepository.GetAll()).FirstOrDefault(brd => brd.Name == vehicle.BrandName);
+                Console.WriteLine("Brand Id is :" + brands?.Id);
+                var categories = (await _UOFInstance._categoriesRepository.GetAll()).FirstOrDefault(cat => cat.Name == vehicle.CategoryName);
+                Console.WriteLine("Category Id is :" + categories?.Id);
 
 
+                var stock = (await _UOFInstance._stocksRepository.GetAll()).FirstOrDefault(stk => stk.VehicleId == vehicle.VehicleId);
+                Console.WriteLine("Stock Id is :" + stock?.Id);
 
-                var newVehicle = new Vehicles
+
+                existingVehicle.Id = vehicle.VehicleId;
+                existingVehicle.Name = vehicle.Name;
+                existingVehicle.ModelYear = vehicle.ModelYear;
+                existingVehicle.Description = vehicle.Description;
+                existingVehicle.Price = vehicle.Price;
+                existingVehicle.Rating = vehicle.Rating;
+                existingVehicle.BrandID = brands?.Id;
+                existingVehicle.CategoryId = categories?.Id;
+                existingVehicle.StockId = stock.Id;
+                existingVehicle.Stocks.Quantity = vehicle.Quantity;
+
+                var selectedColours = (vehicle.SelectedColours).Split(",");
+                var allColour = await _UOFInstance._coloursRepository.GetAll();
+                var SelectEntityColour = allColour
+                                                .Where(clr => selectedColours.Contains(clr.Name, StringComparer.OrdinalIgnoreCase));
+
+                existingVehicle.Colours?.Clear();
+                foreach (var colour in SelectEntityColour)
                 {
-                    Id = vehicle.Id,
-                    Name = vehicle.Name,
-                    ModelYear = vehicle.ModelYear,
-                    Description = vehicle.Description,
-                    Price = vehicle.Price,
-                    Rating = vehicle.Rating,
-                    BrandID = brands?.Id,
-                    CategoryId = categories?.Id,
-                    StockId = stock?.Id
-                };
+                    existingVehicle.Colours?.Add(colour);
+                }
+                Console.WriteLine("Added Colours to the list");
+
+                //vehicle.SelectedColours are coming as csv values and existingVehicle.Colours are the ICollection<Colours>
 
 
-                _UOFInstance._vehicleRepository.Update(newVehicle);
                 await _UOFInstance.Save();
 
                 Console.WriteLine("The edit is successfull");

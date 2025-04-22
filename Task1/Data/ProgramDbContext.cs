@@ -93,10 +93,10 @@ namespace Task1.Data
 
         }
 
-        DbSet<Vehicles> Vehicles { get; set; }
-        DbSet<Brands> Brands { get; set; }
-        DbSet<Categories> Categories { get; set; }
-        DbSet<Stocks> Stocks { get; set; }
-        DbSet<Colours> Colours { get; set; }
+        public DbSet<Vehicles> Vehicles { get; set; }
+        public DbSet<Brands> Brands { get; set; }
+        public DbSet<Categories> Categories { get; set; }
+        public DbSet<Stocks> Stocks { get; set; }
+        public DbSet<Colours> Colours { get; set; }
     }
 }

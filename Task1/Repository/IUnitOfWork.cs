@@ -4,7 +4,8 @@ namespace Task1.Repository
 {
     public interface IUnitOfWork : IDisposable
     {
-        IGenericRepository<Vehicles> _vehicleRepository { get; }
+        //IGenericRepository<Vehicles> _vehicleRepository { get; }
+        VehicleRepository _vehicleRepository { get; }
         IGenericRepository<Categories> _categoriesRepository { get; }
         IGenericRepository<Brands> _brandsRepository { get; }
         IGenericRepository<Colours> _coloursRepository { get; }
