@@ -99,18 +99,9 @@ namespace Task1.Controllers
 
             var result = await _UOFInstance._vehicleRepository.GetById(Id);
 
-            var vehicles = new Vehicles()
-            {
-                Id = result.Id,
-                Name = result.Name,
-                ModelYear = result.ModelYear,
-                Description = result.Description,
-                Price = result.Price,
-                Rating = result.Rating,
 
-            };
 
-            return View(vehicles);
+            return View(result);
         }
         [HttpPost]
         [DisplayName("Delete")]
@@ -142,13 +133,14 @@ namespace Task1.Controllers
                 _UOFInstance._vehicleRepository.Delete(vehicles);
                 await _UOFInstance.Save();
 
+                TempData["SuccessMessage"] = "Vehicle Deleted successfully!";
 
                 return RedirectToAction("Index", "Vehicles");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error deleting vehicle: {ex.Message}");
-                return View(vehicles);
+                return View(result);
             }
         }
 
@@ -236,6 +228,7 @@ namespace Task1.Controllers
                 await _UOFInstance.Save();
 
                 Console.WriteLine("The edit is successfull");
+                TempData["SuccessMessage"] = "Vehicle updated successfully!";
                 return RedirectToAction("Index", "Vehicles");
             }
             catch (Exception ex)

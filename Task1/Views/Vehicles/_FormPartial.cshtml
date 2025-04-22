@@ -1,116 +1,103 @@
 ﻿@using Task1.DTO;
 @model Task1.ViewModel.VehicleViewModel
 
-<div class="Formcontainer my-3" style="text-align:left;">
 
+
+<div class="Formcontainer my-4 p-4 rounded shadow-sm" style="background-color: #f9f9f9; text-align:left;">
+
+	<h4>Filtters Option</h4>
 	<!-- Filter Form -->
-	<form method="get" class="mb-2">
+	<form method="get" class="mb-4">
 		<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
 		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
-		<div class="d-flex gap-3 align-items-center flex-wrap">
+		<div class="d-flex flex-wrap gap-4 align-items-center justify-content-start">
 
-
-			@Html.DropDownListFor(model => model.Query.SingleFilter, Model.CategoryList, new { @class = "form-select form-select-sm w-auto", @id = "SingleFilter" })
-
-			<select id="MultiSelectFilter" multiple class="form-control" style="width:20%">
-
-				@foreach (var item in Model.BrandList as IEnumerable<string>)
-				{
-					<option value="@item">@item</option>
-				}
-			</select>
-
-			<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
-
-			<!--Radio button-->
-			<div class="d-flex flex-column m-2 p-3">
-
-				@foreach (StockAvailability value in Enum.GetValues(typeof(StockAvailability)))
-				{
-					var isChecked = Model.Query.StockAvail == value;
-					<span class="p-2">
-						<input class="StockAvail"
-							   type="radio"
-							   name="Query.StockAvail"
-							   id="@value"
-							   value="@value"
-						@(isChecked ? "checked" : "") />
-						<label for="@value" style="width:fit-content;">@value.GetDescription()</label>
-					</span>
-				}
+			<!-- Single Dropdown -->
+			<div class="flex-grow-1" style="min-width:180px;">
+				@Html.DropDownListFor(model => model.Query.SingleFilter, Model.CategoryList, new { @class = "form-select form-select-sm" })
 			</div>
 
-			<!-- CheckBox button-->
-			<div class="Checkbox">
-				<div class="check-group">
+			<!-- Multi Select Dropdown -->
+			<div class="flex-grow-1" style="min-width:200px;">
+				<select id="MultiSelectFilter" multiple class="form-select form-select-sm">
+					@foreach (var item in Model.BrandList as IEnumerable<string>)
+					{
+						<option value="@item">@item</option>
+					}
+				</select>
+				<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
+			</div>
 
+			<!-- Stock Availability (Radio Buttons) -->
+			<div class="flex-grow-1 d-flex flex-column" style="min-width:180px;">
+				<label class="form-label mb-1 fw-bold">Stock Availability</label>
+				<div class="d-flex flex-column gap-2">
+					@foreach (StockAvailability value in Enum.GetValues(typeof(StockAvailability)))
+					{
+						var isChecked = Model.Query.StockAvail == value;
+						<div class="form-check">
+							<input class="form-check-input StockAvail" type="radio" name="Query.StockAvail" id="@value" value="@value" @(isChecked ? "checked" : "") />
+							<label class="form-check-label" for="@value">@value.GetDescription()</label>
+						</div>
+					}
+				</div>
+			</div>
+
+			<!-- Colours (Checkboxes arranged in two lines) -->
+			<div class="flex-grow-1 d-flex flex-column" style="min-width:250px;">
+				<label class="form-label mb-1 fw-bold">Colours</label>
+				<div class="d-grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
 					@for (int i = 0; i < Model.ColoursOptionList.Count; i++)
 					{
 						var item = Model.ColoursOptionList[i];
 						var isChecked = Model.Query.ColoursList != null && Model.Query.ColoursList.Contains(item);
 
-						<span class="checkbox" for="colorCheckbox_@i">
-							<input class="checkbox__input color-checkbox"
-								   type="checkbox"
-								   value="@item"
-								   id="colorCheckbox_@i"
-							@(isChecked ? "checked" : "") />
-
-							<span class="checkbox__label">@item</span>
-						</span>
-					}
-
-					<!-- This is the field that will be submitted -->
-					<input type="hidden" id="ColoursListHidden" name="Query.ColoursList" value="" />
-
-					<div class="check-group__result">Options chosen:</div>
-				</div>
-			</div>
-
-			<!-- Range Slider -->
-			<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
-			<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
-
-			<div class="wrapper">
-				<div class="container">
-					<div id="slider-wrapper">
-						<div id="slider-range"></div>
-						<div class="range"></div>
-
-						<div class="range-wrapper">
+						<div class="form-check">
+							<input class="form-check-input color-checkbox" type="checkbox" value="@item" id="colorCheckbox_@i" @(isChecked ? "checked" : "") />
+							<label class="form-check-label" for="colorCheckbox_@i">@item</label>
 						</div>
-
-					</div>
-
+					}
 				</div>
+				<input type="hidden" id="ColoursListHidden" name="Query.ColoursList" value="" />
 			</div>
 
-			<!-- Rating filter  -->
-			<div class="Rating-Filtter">
+			<!-- Price Range (Smaller Width ~ 35%) -->
+			<div class="flex-grow-1 d-flex flex-column" style="flex-basis: 35%; min-width:280px;">
+				<label class="form-label mb-1 fw-bold">Price Range</label>
+				<div id="slider-wrapper" style="padding:10px; background:#fff; border:1px solid #ccc; border-radius:8px;">
+					<div id="slider-range"></div>
+					<div class="range"></div>
+				</div>
+				<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
+				<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
+			</div>
 
+
+			<!-- Rating -->
+			<div class="flex-grow-1 d-flex flex-column" style="min-width:180px;">
+				<label class="form-label mb-1 fw-bold">Rating</label>
 				<label class="rating-label">
-					<input class="rating"
+					<input class="rating form-range"
 						   id="RatingValue"
 						   max="5"
 						   name="Query.Rating"
 						   oninput="this.style.setProperty('--value', this.value)"
 						   step="1"
-						   style="--stars:5;--value:@Model.Query.Rating"
+						   style="--stars:5; --value:@Model.Query.Rating"
 						   type="range"
 						   value="@Model.Query.Rating">
 				</label>
-
 			</div>
 
-
 		</div>
-		<center class="m-3">
-			<button class="btn btn-sm btn-primary" id="FilterBtn">Apply Filter</button>
-			<button class="btn btn-sm btn-secondary" id="RemoveFilter">Remove all Filter</button>
+
+		<center class="m-4">
+			<button type="submit" class="btn btn-primary btn-sm px-4 mx-2" id="FilterBtn">Apply Filter</button>
+			<button type="button" class="btn btn-secondary btn-sm px-4 mx-2" id="RemoveFilter">Remove all Filters</button>
 		</center>
 
 	</form>
-	<br />
+
 	<!-- Search Form -->
 	<form id="SearchForm" method="get" class="mb-4">
 		<div class="input-group mx-auto" style="width:70%;">
@@ -128,6 +115,6 @@
 				<i class="bi bi-search"></i>
 			</button>
 		</div>
-
 	</form>
+
 </div>
