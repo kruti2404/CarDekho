@@ -89,7 +89,6 @@
             selectedColours.push($(this).val());
         });
         $("#ColoursListHidden").val(selectedColours.join(","));
-        $('.check-group__result').text('Options chosen: ');
     }
 
     // Handle modal interactions
@@ -100,8 +99,6 @@
             openVehicleModal(vehicleId);
         });
     }
-
-    // Open vehicle details modal with AJAX
     function openVehicleModal(vehicleId) {
         const modal = $('#vehicleDetailsModal');
         const modalBody = modal.find('.modal-body');
@@ -110,16 +107,22 @@
         modal.modal('show');
 
         sendAjaxRequest("Vehicles/Details", "GET", { id: vehicleId }, function (data) {
-            modalBody.html(data);
+            setTimeout(function () {
+                modalBody.html(data);
+            }, 1000);
+
         }, function () {
-            modalBody.html('<p class="text-danger">Error loading vehicle details.</p>');
+            setTimeout(function () {
+                modalBody.html('<p class="text-danger">Error loading vehicle details.</p>');
+            }, 1000);
         });
     }
+
     function QueryData() {
         const queryData = {
             "PageSize": parseInt($("input[name='Query.PageSize']").val()) || 10,
-            "SearchTerm": $("#SearchHolder").val() || "", 
-            "SingleFilter": $("select[name='Query.SingleFilter']").val() || "", 
+            "SearchTerm": $("#SearchHolder").val() || "",
+            "SingleFilter": $("select[name='Query.SingleFilter']").val() || "",
             "MultiFilter": $("#MultiFilterHidden").val() || "",
             "StockAvail": $("input[name='Query.StockAvail']:checked").val() || "",
             "ColoursList": $("#ColoursListHidden").val() || "",
