@@ -116,11 +116,10 @@
         });
     }
     function QueryData() {
-
         const queryData = {
-            "PageSize": parseInt($("#PageSize").val()) || null,
-            "SearchTerm": $("#SearchHolder").val() || "",
-            "SingleFilter": $("#SingleFilter").val() || "",
+            "PageSize": parseInt($("input[name='Query.PageSize']").val()) || 10,
+            "SearchTerm": $("#SearchHolder").val() || "", 
+            "SingleFilter": $("select[name='Query.SingleFilter']").val() || "", 
             "MultiFilter": $("#MultiFilterHidden").val() || "",
             "StockAvail": $("input[name='Query.StockAvail']:checked").val() || "",
             "ColoursList": $("#ColoursListHidden").val() || "",
@@ -129,17 +128,15 @@
             "Rating": parseInt($("#RatingValue").val()) || null,
             "SortColumn": $("#SortColumn").val() || "",
             "SortDirection": $("#SortDirection").val() || "ASC",
-            "SearchTerm": $("#SeachHolder").val() || ""
         };
-
         return queryData;
     }
 
 
     // Reusable AJAX Request
     function sendAjaxRequest(url, method = "GET", data = {}, successCallback = null, errorCallback = null) {
-        console.log("The ajax is call for the url ", data);
-        console.log("SearchTerm is :");
+        console.log("The ajax is call for the url ", url);
+        console.log("SearchTerm is :", data.SearchTerm);
 
         $.ajax({
             url: url,

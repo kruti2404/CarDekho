@@ -1,138 +1,122 @@
 ﻿@using Task1.DTO
 @model Task1.ViewModel.VehicleViewModel
-
-@* Add a specific class for easier CSS targeting *@
 <div class="Formcontainer filter-form-container my-4 p-4 rounded shadow-sm">
-
 	<h4 class="filter-title mb-4">Filters Option</h4>
 	<!-- Filter Form -->
 	<form method="get" id="filterForm" class="mb-4">
+		@* Add hidden fields needed for QueryData() ONCE * Paging/Sorting *@
 		<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
-		<input type="hidden" name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
-
-		@* This is the main flex container we will style with CSS *@
+		<input type="hidden" id="SortColumn" name="Query.SortColumn" value="@Model.Query.SortColumn" />
+		<input type="hidden" id="SortDirection" name="Query.SortDirection" value="@Model.Query.SortDirection" />
 		<div class="d-flex flex-wrap gap-3 align-items-start justify-content-start filter-items-wrapper">
-			@* Reduced gap slightly *@
+			<div class="d-flex flex-wrap gap-3 align-items-start justify-content-start filter-items-wrapper">
+				<div class="filter-group-left">
+					<!-- ADD THIS CLASS -->
+					<!-- Category Dropdown -->
+					<div class="filter-item category-item">
+						<label asp-for="Query.SingleFilter" class="form-label fw-bold">Category</label>
+						@Html.DropDownListFor(model => model.Query.SingleFilter, Model.CategoryList, "-- Select Category --", new { @class = "form-select form-select-sm" })
+					</div>
 
-			<!-- Category Dropdown -->
-			<div class="filter-item category-item">
-				<label asp-for="Query.SingleFilter" class="form-label fw-bold">Category</label>
-				@Html.DropDownListFor(model => model.Query.SingleFilter, Model.CategoryList, "-- Select Category --", new { @class = "form-select form-select-sm" })
-			</div>
+					<!-- Brand Multi Select Dropdown -->
+					<div class="filter-item brand-item">
+						<label for="MultiSelectFilter" class="form-label fw-bold">Brands</label>
+						<select id="MultiSelectFilter" multiple class="form-select form-select-sm select2-brands">
+							@foreach (var item in Model.BrandList as IEnumerable<string> ?? Enumerable.Empty<string>())
+							{
+								var isSelected = Model.Query.MultiFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Contains(item) ?? false;
+								<option value="@item" selected="@isSelected">@item</option>
+							}
+						</select>
+						<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
+					</div>
 
-			<!-- Brand Multi Select Dropdown -->
-			<div class="filter-item brand-item">
-				<label for="MultiSelectFilter" class="form-label fw-bold">Brands</label>
-				<select id="MultiSelectFilter" multiple class="form-select form-select-sm select2-brands">
-					@foreach (var item in Model.BrandList as IEnumerable<string> ?? Enumerable.Empty<string>())
-					{
-						var isSelected = Model.Query.MultiFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Contains(item) ?? false;
-						<option value="@item" selected="@isSelected">@item</option>
-					}
-				</select>
-				<input type="hidden" name="Query.MultiFilter" id="MultiFilterHidden" value="@Model.Query.MultiFilter" />
-			</div>
-
-			<!-- Stock Availability (Radio Buttons) -->
-			<div class="filter-item stock-item">
-				<label class="form-label mb-1 fw-bold">Stock Availability</label>
-				<div class="d-flex flex-column gap-1">
-					@foreach (StockAvailability value in Enum.GetValues(typeof(StockAvailability)))
-					{
-						var isChecked = Model.Query.StockAvail == value;
-						<div class="form-check form-check-sm">
-							<input class="form-check-input StockAvail" type="radio" name="Query.StockAvail" id="stock_@value" value="@value" @(isChecked ? "checked" : "") />
-							<label class="form-check-label" for="stock_@value">@value.GetDescription()</label>
-						</div>
-					}
-				</div>
-			</div>
-
-			<!-- Colours (Checkboxes) -->
-			<div class="filter-item colour-item">
-				<label class="form-label mb-1 fw-bold">Colours</label>
-				<div class="colour-options-grid">
-					@if (Model.ColoursOptionList != null)
-					{
-						@for (int i = 0; i < Model.ColoursOptionList.Count; i++)
-						{
-							var item = Model.ColoursOptionList[i];
-							var isChecked = Model.Query.ColoursList?.Split(',', StringSplitOptions.RemoveEmptyEntries).Contains(item) ?? false;
-
-							<div class="form-check form-check-sm">
-								<input class="form-check-input color-checkbox" type="checkbox" value="@item" id="colorCheckbox_@i" @(isChecked ? "checked" : "") />
-								<label class="form-check-label" for="colorCheckbox_@i">@item</label>
-							</div>
-						}
-					}
-				</div>
-				<input type="hidden" id="ColoursListHidden" name="Query.ColoursList" value="@Model.Query.ColoursList" />
-			</div>
-
-			<!-- Rating -->
-			<div class="filter-item rating-item">
-				<label class="form-label mb-1 fw-bold">Rating</label>
-				<label class="rating-label d-flex flex-column align-items-center">
-					<input class="rating form-range"
-						   id="RatingValue"
-						   max="5"
-						   name="Query.Rating"
-						   oninput="this.style.setProperty('--value', this.value)"
-						   step="1"
-						   style="--stars:5; --value:@Model.Query.Rating"
-						   type="range"
-						   value="@Model.Query.Rating">
-					<span class="rating-value-text"></span>
-				</label>
-			</div>
-
-			<!-- Price Range -->
-			<div class="filter-item price-item">
-				<label class="form-label mb-1 fw-bold">Price Range (₹)</label>
-				<div id="slider-wrapper" class="price-slider-container">
-					<div id="slider-range"></div>
-					<div class="range">
-						<span class="range-value" id="min-price-display">@($"₹{Model.Query.MinPrice:N0}")</span>
-						<span class="range-divider">|</span>
-						<span class="range-value" id="max-price-display">@($"₹{Model.Query.MaxPrice:N0}")</span>
+					<!-- Rating -->
+					<div class="filter-item rating-item">
+						<label class="form-label mb-1 fw-bold">Rating</label>
+						<label class="rating-label d-flex flex-column align-items-center">
+							<input class="rating form-range"
+								   id="RatingValue"
+								   max="5"
+								   name="Query.Rating"
+								   oninput="this.style.setProperty('--value', this.value)"
+								   step="1"
+								   style="--stars:5; --value:@Model.Query.Rating"
+								   type="range"
+								   value="@Model.Query.Rating">
+							<span class="rating-value-text"></span>
+						</label>
 					</div>
 				</div>
-				<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
-				<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
-			</div>
-			
-			<!-- Search box -->
-			<div class="filter-item search-item">
-				<label class="form-label fw-bold invisible">Search</label> 
-				<form id="SearchForm" method="get" class="m-0 p-0">
-					<div class="input-group search-bar-container">
-						@* REMOVED style="width:50%;" *@
-						<!-- Hidden fields -->
-						<input type="hidden" name="Query.PageSize" value="@Model.Query.PageSize" />
-						<input type="hidden" name="Query.SingleFilter" value="@Model.Query.SingleFilter" />
-						<input type="hidden" name="Query.MultiFilter" value="@Model.Query.MultiFilter" />
-						<input type="hidden" name="Query.ColoursList" value="@Model.Query.ColoursList" />
-						<input type="hidden" name="Query.MinPrice" value="@Model.Query.MinPrice" />
-						<input type="hidden" name="Query.MaxPrice" value="@Model.Query.MaxPrice" />
-						<input type="hidden" name="Query.Rating" value="@Model.Query.Rating" />
-						<input type="hidden" name="Query.StockAvail" value="@Model.Query.StockAvail" />
 
+				<!-- Stock Availability (Radio Buttons) -->
+				<div class="filter-item stock-item">
+					<label class="form-label mb-1 fw-bold">Stock Availability</label>
+					<div class="d-flex flex-column gap-1">
+						@foreach (StockAvailability value in Enum.GetValues(typeof(StockAvailability)))
+						{
+							var isChecked = Model.Query.StockAvail == value;
+							<div class="form-check form-check-sm">
+								<input class="form-check-input StockAvail" type="radio" name="Query.StockAvail" id="stock_@value" value="@value" @(isChecked ? "checked" : "") />
+								<label class="form-check-label" for="stock_@value">@value.GetDescription()</label>
+							</div>
+						}
+					</div>
+				</div>
+				<!-- Colours checkbox -->
+				<div class="filter-item colour-item">
+					<label class="form-label mb-1 fw-bold">Colours</label>
+					<div class="colour-options-grid">
+						@if (Model.ColoursOptionList != null)
+						{
+							@for (int i = 0; i < Model.ColoursOptionList.Count; i++)
+							{
+								var item = Model.ColoursOptionList[i];
+								var isChecked = Model.Query.ColoursList?.Split(',', StringSplitOptions.RemoveEmptyEntries).Contains(item) ?? false;
+
+								<div class="form-check form-check-sm">
+									<input class="form-check-input color-checkbox" type="checkbox" value="@item" id="colorCheckbox_@i" @(isChecked ? "checked" : "") />
+									<label class="form-check-label" for="colorCheckbox_@i">@item</label>
+								</div>
+							}
+						}
+					</div>
+					<input type="hidden" id="ColoursListHidden" name="Query.ColoursList" value="@Model.Query.ColoursList" />
+				</div>
+
+				<!-- Price Range -->
+				<div class="filter-item price-item">
+					<label class="form-label mb-1 fw-bold">Price Range (₹)</label>
+					<div id="slider-wrapper" class="price-slider-container">
+						<div id="slider-range"></div>
+						<div class="range">
+							<span class="range-value" id="min-price-display">@($"₹{Model.Query.MinPrice:N0}")</span>
+							<span class="range-divider">|</span>
+							<span class="range-value" id="max-price-display">@($"₹{Model.Query.MaxPrice:N0}")</span>
+						</div>
+					</div>
+					<input type="hidden" name="Query.MinPrice" id="minPrice" value="@Model.Query.MinPrice" />
+					<input type="hidden" name="Query.MaxPrice" id="maxPrice" value="@Model.Query.MaxPrice" />
+				</div>
+
+				<!-- Search box (Now directly part of the main form) -->
+				<div class="filter-item search-item align-self-end">
+					<div class="input-group search-bar-container">
 						<input type="text" id="SearchHolder" class="form-control form-control-sm" placeholder="Search..." name="Query.SearchTerm" value="@Model.Query.SearchTerm" />
-						<button id="SearchFilter" class="btn btn-outline-secondary btn-sm" type="submit">
+						<button id="SearchFilter" class="btn btn-outline-secondary btn-sm" type="button">
+							@* Changed type to "button" for clarity *@
 							<i class="bi bi-search"></i>
 						</button>
 					</div>
-				</form>
+				</div>
+
+			</div> @* End filter-items-wrapper *@
+
+			<!-- Buttons -->
+			<div class="text-center mt-4 filter-buttons">
+				<button type="submit" class="btn btn-primary btn-sm px-4 mx-2" id="FilterBtn">Apply Filter</button>
+				<button type="button" class="btn btn-secondary btn-sm px-4 mx-2" id="RemoveFilter">Remove all Filters</button>
 			</div>
 
-		</div> @* End filter-items-wrapper *@
-
-		<!-- Buttons -->
-		<div class="text-center mt-4 filter-buttons">
-			<button type="submit" class="btn btn-primary btn-sm px-4 mx-2" id="FilterBtn">Apply Filter</button>
-			<button type="button" class="btn btn-secondary btn-sm px-4 mx-2" id="RemoveFilter">Remove all Filters</button>
-		</div>
-
-	</form> @* End Filter Form *@
-
+	</form>
 </div>
