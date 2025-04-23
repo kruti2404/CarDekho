@@ -5,10 +5,8 @@
 :root {
     --header-height: 3rem;
     --nav-width: 68px;
-    --first-color: #4723D9; /* Original Purple */
-    /* --first-color: #0d6efd; */ /* Bootstrap Blue - uncomment to use */
+    --first-color: #4723D9;
     --first-color-light: #AFA5D9; /* Original Light Purple */
-    /* --first-color-light: #cfe2ff; */ /* Light Bootstrap Blue - uncomment to use */
     --white-color: #F7F6FB;
     --body-font: 'Nunito', sans-serif;
     --normal-font-size: 1rem;
@@ -145,58 +143,48 @@ a {
     position: absolute;
     right: 1rem; /* Position arrow to the right */
     font-size: 1.25rem;
-    transition: transform 0.3s ease; /* Smooth rotation */
-    color: var(--first-color-light); /* Match link color */
+    transition: transform 0.3s ease;
+    color: var(--first-color-light);
 }
 
 .nav_link_parent:hover .nav_dropdown-icon {
-    color: var(--white-color); /* Match link hover color */
+    color: var(--white-color);
 }
 
 .nav_submenu {
-    max-height: 0; /* Start collapsed */
+    max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-out; /* Smooth expand/collapse */
-    background-color: rgba(0, 0, 0, 0.1); /* Optional: slightly different background */
+    transition: max-height 0.3s ease-out;
+    background-color: rgba(0, 0, 0, 0.1);
     border-radius: .25rem;
-    margin-left: calc(1.5rem + 1.25rem + 1rem); /* Indent based on icon+gap+logo padding */
-    margin-right: 0.5rem; /* Keep some right padding */
-    margin-top: 0.5rem; /* Space between parent and submenu */
+    margin-left: calc(1.5rem + 1.25rem + 1rem);
+    margin-right: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .nav_submenu-link {
-    display: block; /* Make links take full width */
+    display: block;
     color: var(--first-color-light);
-    padding: .5rem 0 .5rem 1rem; /* Adjust padding */
+    padding: .5rem 0 .5rem 1rem;
     transition: .3s;
-    white-space: nowrap; /* Prevent wrapping when sidebar is expanded */
+    white-space: nowrap;
 }
 
     .nav_submenu-link:hover {
         color: var(--white-color);
-        background-color: rgba(255, 255, 255, 0.1); /* Slight hover effect */
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
-/* Class to show the submenu */
 .submenu-show {
-    max-height: 1000px; /* Set a large max-height to allow content */
+    max-height: 1000px;
     transition: max-height 0.4s ease-in;
 }
 
-/* Class to rotate the dropdown icon */
 .arrow-rotate {
     transform: rotate(180deg);
 }
-/* ---- END NEW SUBMENU STYLES ---- */
 
-
-/* Toggle classes */
-.show { /* Sidebar expanded state */
-    left: 0;
-    width: calc(var(--nav-width) + 156px); /* Expanded width from original CSS */
-}
-
-.body-pd { /* Body padding when sidebar is expanded */
+.body-pd {
     padding-left: calc(var(--nav-width) + 1rem);
 }
 
@@ -243,7 +231,7 @@ a {
         padding: 1rem 1rem 0 0;
     }
 
-    .show { /* Sidebar expanded state on larger screens */
+    .nav_list .nav_submenu.show .show {
         width: calc(var(--nav-width) + 156px);
     }
 
@@ -251,9 +239,8 @@ a {
         padding-left: calc(var(--nav-width) + 188px); /* Adjusted padding */
     }
 
-    /* Adjust submenu indent for wider sidebar */
-    .l-navbar.show .nav_submenu {
-        /* No change needed if margin-left calculation is correct */
+    .l-navbar.show {
+        width: calc(var(--nav-width) + 156px);
     }
 
     .nav_link_parent {

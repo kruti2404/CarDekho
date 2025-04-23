@@ -35,7 +35,7 @@ namespace Task1.Models
         public IEnumerable<string> CategoriesList { get; set; }
 
         [Required(ErrorMessage = "Quantity is required")]
-        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
+        [Range(0, int.MaxValue, ErrorMessage = "Quantity must be at least 0")]
         public int Quantity { get; set; }
 
         [Required(ErrorMessage = "Colours are required")]

@@ -167,9 +167,9 @@
         const queryData = QueryData();
         const queryString = buildQueryString(queryData);
 
-        //Update URL in browser (without reloading the page)
+        //Update URL in browser
         const newUrl = window.location.pathname + '?' + queryString;
-        window.history.replaceState(null, '', newUrl);
+        window.history.pushState(null, '', newUrl);
         $("body").addClass("loading");
 
 
