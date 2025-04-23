@@ -136,7 +136,7 @@
     }
 
 
-    // Reusable AJAX Request
+    // AJAX Request
     function sendAjaxRequest(url, method = "GET", data = {}, successCallback = null, errorCallback = null) {
         console.log("The ajax is call for the url ", url);
         console.log("SearchTerm is :", data.SearchTerm);
