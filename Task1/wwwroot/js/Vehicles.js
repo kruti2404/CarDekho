@@ -119,7 +119,7 @@
 
         const queryData = {
             "PageSize": parseInt($("#PageSize").val()) || null,
-            "SearchTerm": $("#filterForm").find('input[name="Query.SearchTerm"]').val() || "",
+            "SearchTerm": $("#SearchHolder").val() || "",
             "SingleFilter": $("#SingleFilter").val() || "",
             "MultiFilter": $("#MultiFilterHidden").val() || "",
             "StockAvail": $("input[name='Query.StockAvail']:checked").val() || "",
@@ -138,7 +138,9 @@
 
     // Reusable AJAX Request
     function sendAjaxRequest(url, method = "GET", data = {}, successCallback = null, errorCallback = null) {
-        console.log("The ajax is call for the url ", url);
+        console.log("The ajax is call for the url ", data);
+        console.log("SearchTerm is :");
+
         $.ajax({
             url: url,
             type: method,
@@ -168,10 +170,11 @@
         const queryData = QueryData();
         const queryString = buildQueryString(queryData);
 
-        // Update URL in browser (without reloading the page)
+        //Update URL in browser (without reloading the page)
         const newUrl = window.location.pathname + '?' + queryString;
         window.history.replaceState(null, '', newUrl);
         $("body").addClass("loading");
+
 
         sendAjaxRequest(url, "GET", queryData, function (data) {
             console.log("The data is loaded", data);

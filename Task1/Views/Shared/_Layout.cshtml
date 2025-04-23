@@ -4,46 +4,100 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewData["Title"] - Task1</title>
-	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+	<!-- Common CSS -->
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<!-- Add Boxicons CSS for Sidebar Icons -->
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<!-- Add Bootstrap Icons (used in Index and Edit views) -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+	<!-- Site Specific CSS -->
+	<link rel="stylesheet" href="~/css/Site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/Task1.styles.css" asp-append-version="true" />
-	@RenderSection("Styles", required: false);
+
+	<!-- Placeholder for View-Specific Styles -->
+	@await RenderSectionAsync("Styles", required: false)
 
 </head>
-<body>
-	<header>
-		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-			<div class="container-fluid">
-				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Task1</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-						aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-around">
-					<ul class="navbar-nav flex-grow-1">
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-						</li>
-					</ul>
+<body id="body-pd">
+	<header class="header" id="header">
+		<div class="header_toggle"> <i class='bx bx-menu' id="header-toggle"></i> </div>
+		<div class="header_img"> <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUHDUgV9reOwUwp2csByh0ByEz8xknKmKPNJjySlY5IwZPI1y1NvPZmTAsUXB9j0bn32k&usqp=CAU" alt=""> </div>
+	</header>
+	<div class="l-navbar" id="nav-bar">
+		<nav class="nav">
+			<div>
+				<a asp-controller="Home" asp-action="Index" class="nav_logo"> <i class='bx bx-layer nav_logo-icon'></i> <span class="nav_logo-name">CarDekho</span> </a>
 
-					<ul class="navbar-nav flex-grow-2 ">
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Vehicles" asp-action="Index">Vehicles</a>
-						</li>
+				<div class="nav_list">
+					<a asp-controller="Home" asp-action="Index" class="nav_link active">
+						<i class='bx bx-grid-alt nav_icon'></i>
+						<span class="nav_name">Dashboard</span>
+					</a>
 
-					</ul>
+					<!-- Profile Menu Item with Submenu -->
+					<div class="nav_item">
+						<a href="#" class="nav_link nav_link_parent">
+							<!-- Added nav_link_parent class -->
+							<i class='bx bx-user nav_icon'></i>
+							<span class="nav_name">Profile</span>
+							<i class='bx bx-chevron-down nav_dropdown-icon'></i> <!-- Dropdown Icon -->
+						</a>
+						<div class="nav_submenu">
+							<!-- Submenu Container -->
+							<a href="#" class="nav_submenu-link">Show Profile</a>
+							<a href="#" class="nav_submenu-link">Edit Profile</a>
+							<a href="#" class="nav_submenu-link">Change Password</a>
+						</div>
+					</div>
+
+					<!-- Inventory Menu Item with Submenu -->
+					<div class="nav_item">
+						<a href="#" class="nav_link nav_link_parent">
+							<!-- Added nav_link_parent class -->
+							<i class='bx bx-message-square-detail nav_icon'></i>
+							<span class="nav_name">Inventory</span>
+							<i class='bx bx-chevron-down nav_dropdown-icon'></i> <!-- Dropdown Icon -->
+						</a>
+						<div class="nav_submenu">
+							<!-- Submenu Container -->
+							<a asp-controller="Vehicles" asp-action="Create" class="nav_submenu-link">Add Vehicle</a> <!-- Example Link -->
+							<a asp-controller="Vehicles" asp-action="Index" class="nav_submenu-link">Vehicle Stocks</a> <!-- Example Link -->
+							<a href="#" class="nav_submenu-link">Reports</a> <!-- Example Link -->
+						</div>
+					</div>
+
+					<a href="#" class="nav_link">
+						<i class='bx bx-bar-chart-alt-2 nav_icon'></i>
+						<span class="nav_name">About</span>
+					</a>
 				</div>
 			</div>
+			<a href="#" class="nav_link">
+				<i class='bx bx-log-out nav_icon'></i>
+				<span class="nav_name">SignOut</span>
+			</a>
 		</nav>
-	</header>
-	<div class="container">
+	</div>
+
+	<!-- Container for page content -->
+	<div class="container-fluid pt-4">
 		<main role="main" class="pb-3">
 			@RenderBody()
 		</main>
 	</div>
-	@RenderSection("Scripts", required: false);
+
+	<!-- Common Scripts -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+	<!-- Site Specific Scripts (including Sidebar logic) -->
+	<script src="~/js/Site.js" asp-append-version="true"></script>
+
+	<!-- Placeholder for View-Specific Scripts -->
+	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

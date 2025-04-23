@@ -1,0 +1,260 @@
+﻿
+/* Checkbox css */
+.check-group {
+    background: #fff;
+    max-width: 40rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 10, 0.2);
+    counter-reset: total checked;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 2.5rem;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    counter-increment: total;
+    position: relative;
+    padding: 4px 0;
+    cursor: pointer;
+}
+
+.checkbox__input {
+    width: 2.25rem;
+    height: 1.25rem;
+    margin-right: 0.25rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+    .checkbox__input:checked {
+        counter-increment: checked; /* Increment the checked counter when this box is checked */
+    }
+
+.checkbox__label {
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #333;
+    line-height: 1.2;
+}
+
+.check-group__result {
+    font-weight: bold;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+}
+
+    .check-group__result::after {
+        content: counter(checked) " / " counter(total);
+        padding-left: 0.5rem;
+    }
+
+#vehicleResultsContainer a {
+    pointer-events: all;
+}
+
+/* --- Filter Form Visual Styles (Layout Focused) --- */
+
+.filter-form-container {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+.filter-title {
+    color: #343a40;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 0.6rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+/* Main flex container */
+.filter-items-wrapper {
+    gap: 1rem 1.5rem; /* Row gap, Column gap */
+    align-items: flex-start; /* Align items to the top */
+}
+
+    /* Base style for all filter items */
+    .filter-items-wrapper > .filter-item {
+        margin-bottom: 0; /* Rely on gap */
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+/* --- Sizing for the first row --- */
+/* Adjusted percentages slightly */
+.filter-item.category-item {
+    flex-basis: 17%;
+    min-width: 160px;
+}
+
+.filter-item.brand-item {
+    flex-basis: 20%;
+    min-width: 180px;
+}
+
+.filter-item.stock-item {
+    flex-basis: 14%;
+    min-width: 120px;
+}
+
+.filter-item.colour-item {
+    flex-basis: 17%;
+    min-width: 160px;
+}
+
+.filter-item.price-item {
+    flex-basis: 28%; /* Reduced slightly */
+    min-width: 250px;
+    flex-grow: 1; /* Still allow growth */
+}
+
+/* --- Sizing for the second row --- */
+/* Force Rating item onto a new line */
+.filter-item.rating-item {
+    flex-basis: 100%; /* Force wrap */
+    order: 10; /* Ensure it comes first on the new line */
+    margin-top: 0.5rem; /* Space above second row */
+    /* Define its size on the second row */
+    width: auto; 
+    flex-basis: auto; /* Reset flex-basis */
+    min-width: 160px; /* Set a minimum */
+    max-width: 200px; /* Prevent it getting too wide */
+    flex-grow: 0; /* Do not allow rating to grow */
+}
+
+.filter-item.search-item {
+    order: 11; /* Ensure it comes after rating on the new line */
+    flex-basis: 50%; /* Suggest initial size */
+    min-width: 250px;
+    flex-grow: 1; /* Allow search to fill remaining space */
+    margin-top: 0.5rem; /* Match rating margin */
+}
+    /* Align search input vertically */
+    .filter-item.search-item .search-bar-container {
+        width: 100%;
+        margin-top: 0.1rem; /* Adjust alignment slightly */
+    }
+
+    .filter-item.search-item .form-label.invisible {
+        height: 0;
+        margin: 0;
+        padding: 0;
+        visibility: hidden;
+    }
+
+
+/* --- General Styling (Keep relevant parts from previous CSS) --- */
+
+.filter-form-container .form-label {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    color: #495057;
+    font-weight: 600;
+}
+
+.filter-form-container .form-select-sm,
+.filter-form-container .form-control-sm {
+    font-size: 0.875rem;
+}
+
+/* Select2 styling */
+.filter-item .select2-container {
+    width: 100% !important;
+}
+
+    .filter-item .select2-container .select2-selection--multiple {
+        border: 1px solid #ced4da !important;
+        min-height: calc(1.5em + 0.5rem + 2px) !important;
+        padding: 0.2rem 0.4rem !important;
+        font-size: 0.875rem !important;
+        border-radius: 0.2rem !important;
+    }
+
+.filter-item .select2-selection__choice {
+    font-size: 0.8rem !important;
+    margin-top: 0.2rem !important;
+    padding: 1px 5px !important;
+    background-color: #e9ecef !important;
+    border-color: #ced4da !important;
+}
+
+/* Checkbox/Radio */
+.filter-form-container .form-check {
+    padding-left: 1.6em;
+    margin-bottom: 0.3rem;
+}
+
+.filter-form-container .form-check-label {
+    font-size: 0.88rem;
+    padding-top: 0.05rem;
+}
+
+.filter-form-container .form-check-sm .form-check-label {
+    font-size: 0.85rem;
+}
+
+/* Colour Grid */
+.colour-options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.1rem 0.8rem;
+    margin-top: 0.25rem;
+}
+
+/* Price Slider */
+.price-slider-container {
+    margin-top: 5px;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+    .price-slider-container #slider-range + .range {
+        margin-top: 8px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 5px;
+        font-size: 0.85rem;
+        color: #555;
+    }
+
+    .price-slider-container .range-divider {
+        margin: 0 5px;
+        color: #ccc;
+    }
+
+    .price-slider-container .range-value {
+        font-weight: 500;
+    }
+
+/* Rating */
+.rating-value-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.1rem;
+    min-height: 1em;
+}
+/* Ensure rating input itself doesn't stretch excessively */
+.rating-item .rating-label .rating {
+    /*width: auto;*/ /* Override potential form-range width: 100% */
+    display: inline-block; /* Allow centering */
+}
+
+
+/* Buttons */
+.filter-buttons {
+    border-top: 1px solid #e9ecef;
+    padding-top: 1rem;
+    margin-top: 1.5rem !important;
+}
+
+/* Search Bar Container (within filter-item) */
+.search-bar-container {
+    max-width: none;
+}
