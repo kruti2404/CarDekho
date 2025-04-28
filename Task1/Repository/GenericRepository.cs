@@ -95,7 +95,6 @@ namespace Task1.Repository
             return (vehicleModel);
         }
 
-
         public async Task Insert(T entity)
         {
             await _table.AddAsync(entity);

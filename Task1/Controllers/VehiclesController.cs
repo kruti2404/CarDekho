@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -239,6 +240,98 @@ namespace Task1.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var BrandList = (await _UOFInstance._brandsRepository.GetAll()).Select(brd => brd.Name);
+            var CategoriesList = (await _UOFInstance._categoriesRepository.GetAll()).Select(clg => clg.Name);
+            var ColoursList = (await _UOFInstance._coloursRepository.GetAll()).Select(clr => clr.Name);
+
+            var result = new VehicleCreateForm();
+
+            result.ColoursList = ColoursList;
+            result.CategoriesList = CategoriesList;
+            result.BrandList = BrandList;
+
+            return View(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(VehicleCreateForm model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                Console.WriteLine("Name is :" + model.Name);
+                Console.WriteLine("Rating is :" + model.Rating);
+                Console.WriteLine("Category name  is :" + model.CategoryName);
+                Console.WriteLine("Brand name  is :" + model.BrandName);
+                Console.WriteLine("Coulours Selected are : " + model.SelectedColours);
+                foreach (var colour in model.SelectedColours)
+                {
+                    Console.WriteLine(colour);
+                }
+                Console.WriteLine("Range is : " + model.Price);
+                Console.WriteLine("Desciption is : " + model.Description);
+                Console.WriteLine("Quantity is : " + model.Quantity);
+                Console.WriteLine("Year is : " + model.ModelYear);
+                TempData["SuccessMessage"] = "Create post runned";
+
+                var brands = await _UOFInstance._brandsRepository.GetAll();
+                var selectedbrand = brands.FirstOrDefault(brd => brd.Name == model.BrandName);
+
+                var category = await _UOFInstance._categoriesRepository.GetAll();
+                var selectedCategory = category.FirstOrDefault(cat => cat.Name == model.CategoryName);
+
+                var Colours = await _UOFInstance._coloursRepository.GetAll();
+                var selectedclrs = Colours.Where(clr => model.SelectedColours.Contains(clr.Name)).ToList();
+
+                var stk = new Stocks
+                {
+                    Quantity = model.Quantity
+                };
+
+
+                var vehicle = new Vehicles
+                {
+                    Name = model.Name,
+                    Rating = model.Rating,
+                    ModelYear = model.ModelYear,
+                    Price = model.Price,
+                    Description = model.Description,
+                    Colours = selectedclrs,
+                    Brands = selectedbrand,
+                    Categories = selectedCategory,
+                    Stocks = stk
+                };
+
+                try
+                {
+                    await _UOFInstance._vehicleRepository.Insert(vehicle);
+                    await _UOFInstance.Save();
+                    Console.WriteLine("Inserted");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error during insert: " + ex.Message);
+                    TempData["ErrorMessage"] = "Error during insertion.";
+                    return View(model);
+                }
+
+                return RedirectToAction("Index", "Vehicles");
+            }
+            else
+            {
+                Console.WriteLine("Rating is :" + model.Rating);
+                Console.WriteLine("model is null due to rating ");
+                model.BrandList = (await _UOFInstance._brandsRepository.GetAll()).Select(brd => brd.Name);
+                model.CategoriesList = (await _UOFInstance._categoriesRepository.GetAll()).Select(clg => clg.Name);
+                model.ColoursList = (await _UOFInstance._coloursRepository.GetAll()).Select(clr => clr.Name);
+
+                return View(model);
+            }
+
+        }
 
     }
 }

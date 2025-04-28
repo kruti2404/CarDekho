@@ -1,0 +1,201 @@
+﻿@model Task1.Models.VehicleCreateForm
+@{
+	ViewBag.Title = "Create";
+}
+@section Styles {
+	<link rel="stylesheet" href="~/css/RangeSlider.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/FilterForm.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/Rating.css" asp-append-version="true" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://jsuites.net/v5/jsuites.css" type="text/css" /> 	@* Link of the Jsuites Dropdown plugin *@
+	<link href="~/css/Create/MultiSelect.css" rel="stylesheet" type="text/css"> @* Multi select drop down by codeshake.io*@
+	<link href="~/css/Create/Range.css" rel="stylesheet" /> @* Style for the Range slider  *@
+	<link rel="stylesheet" href="~/css/Create/YearPicker.css"> <!-- Include the CSS for yearpicker -->
+}
+
+<form id="crtForm" method="post">
+	@Html.AntiForgeryToken()
+	<div class="d-flex flex-column m-2 p-2">
+
+		<div class="d-flex flex-row">
+			<div class="col-md-4">
+				<label asp-for="Name" class="form-label"></label>
+				<input type="text" asp-for="Name" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+
+			</div>
+			<div class="col-md-4">
+				<label asp-for="Description" class="form-label"></label>
+				<textarea cols="60" asp-for="Description"> </textarea>
+				<span asp-validation-for="Description" class="text-danger"></span>
+
+			</div>
+		</div>
+		<div class="d-flex flex-row">
+			<div class="col-md-4">
+				@* Dropdown for rating  *@
+				<label asp-for="Rating" class="form-label"></label>
+				<div id='rating'></div>
+				<input type="hidden" id="Ratinghid" asp-for="Rating" />
+				<span asp-validation-for="Rating" class="text-danger"></span>
+			</div>
+			<div class="col-md-4">
+				<label asp-for="CategoryName" class="form-label"></label>
+				<input type="hidden" id="Category" asp-for="CategoryName" />						<span asp-validation-for="Quantity" class="text-danger"></span>
+				<span asp-validation-for="CategoryName" class="text-danger"></span>
+
+				<div id="dropdownForCategory"></div>
+			</div>
+			<div class="col-md-4">
+				<label asp-for="BrandName" class="form-label"></label>
+				<input type="hidden" id="Brand" asp-for="BrandName" />
+				<span asp-validation-for="BrandName" class="text-danger"></span>
+
+				<div id="BrandForCategory"></div>
+			</div>
+		</div>
+
+		<div class="d-flex flex-row">
+			<div class="col-md-4">
+				<label asp-for="ColoursList" class="form-label"></label>
+				<span asp-validation-for="SelectedColours" class="text-danger"></span>
+				<select id="Colours" asp-for="SelectedColours" multiple data-placeholder="Select colours" data-multi-select>
+					@foreach (var colour in Model.ColoursList)
+					{
+						<option value="@colour">@colour</option>
+					}
+				</select>
+				<div id="dropdownForCategory"></div>
+			</div>
+
+			<div>
+				<label asp-for="ModelYear"></label>
+				<input type="text" class="yearpicker" value="2000">
+				<input type="hidden" id="HiddenYear" asp-for="ModelYear" /> <!-- Hidden field to hold the selected year -->
+				<span asp-validation-for="ModelYear" class="text-danger"></span>
+
+			</div>
+
+			<div>
+				<label asp-for="Quantity"></label>
+				<input type="number" min="0" asp-for="Quantity">
+				<span asp-validation-for="Quantity" class="text-danger"></span>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="form-group range__slider">
+				<input type="range" asp-for="Price" step="500">
+				<span asp-validation-for="Price" class="text-danger"></span>
+
+			</div>
+			<div class="form-group range__value">
+				<label>Price</label>
+				<span></span>
+			</div>
+		</div>
+
+	</div>
+
+	<button id="submit">submit</button>
+</form>
+
+@section Scripts {
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script src="https://jsuites.net/v5/jsuites.js"></script> @* Jsuites script *@
+	<script src="~/js/Create/Multiselect.js"></script>  @* Codeshake.io multi select *@
+	<script src="~/js/Create/RangeSlider.js"></script> @* Range slider javascript *@
+	<script src="~/js/RangeSlider.js"></script> @* Rangeslider javascript *@
+	<script src="/js/Create/YearPicker.js"> </script> <!-- Include the JS for yearpicker -->
+
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		var myRating = jSuites.rating(document.getElementById('rating'), {
+			value: 3,
+			tooltip: [ 'Very bad', 'Bad', 'Average', 'Good', 'Very good' ],
+			onchange: console.log("Changed"),
+		});
+
+		// document.getElementById('')
+
+
+
+		var categoriesList = @Html.Raw(Json.Serialize(Model.CategoriesList));
+
+		var categoryDropdownData = categoriesList.map(cat => {
+			return { group: '', value: cat, text: cat };
+		});
+		const dropdown2 = jSuites.dropdown(document.getElementById('dropdownForCategory'), {
+			data: categoryDropdownData,
+			width: '280px',
+			autocomplete: true,
+			value: categoryDropdownData[0]?.value || '',
+			onclose: function () {
+				document.getElementById("Category").value = dropdown2.getValue();
+			}
+		});
+		document.getElementById("Category").value = dropdown2.getValue();
+
+		var BrandList = @Html.Raw(Json.Serialize(Model.BrandList));
+		console.log(BrandList);
+		var BrandDropdownData = BrandList.map( brd => {
+			return { group: '', value: brd, text: brd };
+		});
+
+		const dropdown3 = jSuites.dropdown(document.getElementById('BrandForCategory'), {
+			data: BrandDropdownData,
+			width: '280px',
+			autocomplete: true,
+			value: BrandDropdownData[0]?.value || '',
+			onclose: function () {
+				document.getElementById("Brand").value = dropdown3.getValue();
+			}
+		});
+		document.getElementById("Brand").value = dropdown3.getValue();
+
+		// Script for the Year picker
+			document.addEventListener('DOMContentLoaded', function () {
+
+
+			// OR if you want to initialize with **custom options**:
+			document.querySelectorAll('.yearpicker').forEach(el => {
+				new Yearpicker(el, {
+					year: 2000,
+					startYear: 1700,
+					endYear: 2025,
+					itemTag: 'li',
+					selectedClass: 'selected',
+					disabledClass: 'disabled',
+					hideClass: 'hide',
+					template: `
+						<div class="yearpicker-container">
+							<div class="yearpicker-header">
+								<div class="yearpicker-prev" data-view="yearpicker-prev">&lsaquo;</div>
+								<div class="yearpicker-current" data-view="yearpicker-current">SelectedYear</div>
+								<div class="yearpicker-next" data-view="yearpicker-next">&rsaquo;</div>
+							</div>
+							<div class="yearpicker-body">
+								<ul class="yearpicker-year" data-view="years"></ul>
+							</div>
+						</div>
+					`
+				});
+			});
+		});
+
+
+		document.getElementById("submit").addEventListener( 'click', function  (){
+			var value = document.querySelector('.yearpicker').value;
+			console.log("value is", value);
+			document.getElementById('HiddenYear').value = value;
+
+			document.getElementById('Ratinghid').value = myRating.getValue();
+
+		} );
+
+
+	</script>
+}

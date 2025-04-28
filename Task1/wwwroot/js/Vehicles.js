@@ -14,7 +14,6 @@
 
     });
 
-
     //Sorting filtter handle
     $(document).on("click", ".sorting-filter", function () {
 
@@ -42,8 +41,6 @@
         e.preventDefault();
 
         SendRequest("Vehicles/Index");
-
-
     });
 
     // initialization function
@@ -78,8 +75,6 @@
         $('.color-checkbox').on('change', function () {
             updateColorsHidden();
         });
-
-
     }
 
     // Update colors hidden field
@@ -134,8 +129,6 @@
         };
         return queryData;
     }
-
-
     // AJAX Request
     function sendAjaxRequest(url, method = "GET", data = {}, successCallback = null, errorCallback = null) {
         console.log("The ajax is call for the url ", url);
@@ -165,7 +158,6 @@
             .join('&');
     }
 
-
     function SendRequest(url) {
         const queryData = QueryData();
         const queryString = buildQueryString(queryData);
@@ -186,9 +178,7 @@
 
             $("body").removeClass("loading");
         });
-
     }
-
 
     // Init on ready
     initializeFilters();
