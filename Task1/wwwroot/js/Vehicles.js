@@ -10,7 +10,7 @@
     $("#RemoveFilter").on('click', function (e) {
         e.preventDefault();
         console.log("Remove Filter is applied");
-        window.location.href = '/Vehicles/Index';
+        window.location.href = '/Vehicles';
 
     });
 

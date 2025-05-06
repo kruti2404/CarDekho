@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Task1.DTO;
 using Task1.Models;
 using Task1.Repository;
@@ -329,6 +330,59 @@ namespace Task1.Controllers
                 model.ColoursList = (await _UOFInstance._coloursRepository.GetAll()).Select(clr => clr.Name);
 
                 return View(model);
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetVehicles(int id)
+        {
+            try
+            {
+                var result = await _UOFInstance._vehicleRepository.GetById(id);
+
+                if (result == null)
+                {
+                    return NotFound(new { message = "Vehicle not found." });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while fetching data", error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Filter(string category, string Brand, string colours, int Rating, int MinPrice , int MaxPrice)
+        {
+            Console.WriteLine(category);
+            category = category ?? "";
+            Console.WriteLine(Brand);
+            Console.WriteLine(colours);
+            Console.WriteLine(Rating);
+            try
+            {
+                
+                var result = await _UOFInstance._vehicleRepository.GetAll(10, 1, "", "Id", "ASC", category?? "", Brand?? "", MinPrice, MaxPrice, "", colours ?? "", Rating);
+                var categoryList = await _UOFInstance._categoriesRepository.GetAll();
+                var BrandsList = await _UOFInstance._brandsRepository.GetAll();
+                var ColoursList = await _UOFInstance._coloursRepository.GetAll();
+                var data = new
+                {
+                    result = result,
+                    categories = categoryList.Select(cat => cat.Name),
+                    Brands = BrandsList.Select(brd => brd.Name),
+                    Colours = ColoursList.Select(clr => clr.Name)
+                };
+                Console.WriteLine("Data sent to frontend: " + JsonConvert.SerializeObject(data));
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while fetching data", error = ex.Message });
+
             }
 
         }

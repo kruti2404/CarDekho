@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Task1.Data;
 using Task1.DTO;
 using Task1.ViewModel;
+using System.Linq.Dynamic.Core;
+
 
 
 namespace Task1.Repository
@@ -28,7 +30,7 @@ namespace Task1.Repository
         virtual
         public async Task<IEnumerable<T>> GetAll()
         {
-            return await _table.ToListAsync();
+            return await _table.OrderBy("Name").ToListAsync();
         }
 
         public async Task<VehicleDTO> GetById(int Id)

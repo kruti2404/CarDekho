@@ -20,7 +20,15 @@ namespace Task1
 
             builder.Services.AddScoped<IUnitOfWork, unitOfWork>();
 
+            var allowedOrigins = builder.Configuration.GetValue<string>("allwedOrigins")!.Split(",");
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
+                });
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -33,7 +41,7 @@ namespace Task1
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseCors();
             app.UseRouting();
 
             app.UseAuthorization();
