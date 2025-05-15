@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Task1.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace Task1.Data
 {
-    public class ProgramDbContext : DbContext
+    public class ProgramDbContext : IdentityDbContext<User>
     {
         public ProgramDbContext() : base() { }
         public ProgramDbContext(DbContextOptions<ProgramDbContext> options) : base(options)

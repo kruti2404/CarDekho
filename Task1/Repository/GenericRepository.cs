@@ -30,7 +30,7 @@ namespace Task1.Repository
         virtual
         public async Task<IEnumerable<T>> GetAll()
         {
-            return await _table.OrderBy("Name").ToListAsync();
+            return await _table.OrderBy("Id").ToListAsync();
         }
 
         public async Task<VehicleDTO> GetById(int Id)

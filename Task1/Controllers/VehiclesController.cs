@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +12,9 @@ using Task1.ViewModel;
 
 namespace Task1.Controllers
 {
+    [Authorize]
+    //[Route("api/[controller]")]
+    //[ApiController]
     public class VehiclesController : Controller
     {
         private readonly IUnitOfWork _UOFInstance;
@@ -49,9 +52,6 @@ namespace Task1.Controllers
                  new SelectListItem{Text="15", Value="15"},
                  new SelectListItem{Text="20", Value="20"},
             };
-
-            //PageList.FirstOrDefault(p => p.Value == query.PageSize.ToString())!.Selected = true;
-
             var result = await _UOFInstance._vehicleRepository.GetAll(query.PageSize, query.PageNumber, query.SearchTerm ?? "", query.SortColumn, query.SortDirection, query.SingleFilter ?? "", query.MultiFilter ?? "", query.MinPrice, query.MaxPrice, query.StockAvail.ToString() ?? "All", query.ColoursList ?? "", query.Rating);
             int TotalRecords = result.TotalPages;
 
@@ -287,11 +287,6 @@ namespace Task1.Controllers
                 var Colours = await _UOFInstance._coloursRepository.GetAll();
                 var selectedclrs = Colours.Where(clr => model.SelectedColours.Contains(clr.Name)).ToList();
 
-                var stk = new Stocks
-                {
-                    Quantity = model.Quantity
-                };
-
 
                 var vehicle = new Vehicles
                 {
@@ -302,13 +297,22 @@ namespace Task1.Controllers
                     Description = model.Description,
                     Colours = selectedclrs,
                     Brands = selectedbrand,
-                    Categories = selectedCategory,
-                    Stocks = stk
+                    Categories = selectedCategory
                 };
 
                 try
                 {
                     await _UOFInstance._vehicleRepository.Insert(vehicle);
+                    await _UOFInstance.Save();
+                    var stk = new Stocks
+                    {
+                        Quantity = model.Quantity,
+                        VehicleId = vehicle.Id
+                    };
+                    await _UOFInstance._stocksRepository.Insert(stk);
+                    await _UOFInstance.Save();
+                    vehicle.StockId = stk.Id;
+                    _UOFInstance._vehicleRepository.Update(vehicle);
                     await _UOFInstance.Save();
                     Console.WriteLine("Inserted");
                 }
@@ -355,17 +359,18 @@ namespace Task1.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Filter(string category, string Brand, string colours, int Rating, int MinPrice , int MaxPrice)
+        public async Task<IActionResult> Filter(string category, string Brand, string colours, int Rating, int MinPrice, int MaxPrice, int PageSize, int PageNumber, string SearchTerm, string SortColumn, String SortDirection)
         {
             Console.WriteLine(category);
             category = category ?? "";
             Console.WriteLine(Brand);
             Console.WriteLine(colours);
             Console.WriteLine(Rating);
+            Console.WriteLine(PageSize);
+            Console.WriteLine(PageNumber);
             try
             {
-                
-                var result = await _UOFInstance._vehicleRepository.GetAll(10, 1, "", "Id", "ASC", category?? "", Brand?? "", MinPrice, MaxPrice, "", colours ?? "", Rating);
+                var result = await _UOFInstance._vehicleRepository.GetAll(PageSize, PageNumber, SearchTerm ?? "", SortColumn ?? "Name", SortDirection ?? "ASC", category ?? "", Brand ?? "", MinPrice, MaxPrice, "", colours ?? "", Rating);
                 var categoryList = await _UOFInstance._categoriesRepository.GetAll();
                 var BrandsList = await _UOFInstance._brandsRepository.GetAll();
                 var ColoursList = await _UOFInstance._coloursRepository.GetAll();
