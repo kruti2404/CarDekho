@@ -13,8 +13,8 @@ using Task1.ViewModel;
 namespace Task1.Controllers
 {
     [Authorize]
-    //[Route("api/[controller]")]
-    //[ApiController]
+    [Route("api/[controller]")]
+    [ApiController]
     public class VehiclesController : Controller
     {
         private readonly IUnitOfWork _UOFInstance;
@@ -23,7 +23,7 @@ namespace Task1.Controllers
             _UOFInstance = UOFInstance;
         }
 
-        [HttpGet]
+        [HttpGet("index")]
         public async Task<IActionResult> Index([FromQuery] QueryDTO query)
         {
             IEnumerable<Brands> brands = await _UOFInstance._brandsRepository.GetAll();
@@ -91,7 +91,7 @@ namespace Task1.Controllers
             return PartialView(result);
         }
 
-        [HttpGet]
+        [HttpGet("Delete/{Id}")]
         public async Task<IActionResult> Delete(int Id)
         {
             if (Id == 0)
@@ -105,8 +105,7 @@ namespace Task1.Controllers
 
             return View(result);
         }
-        [HttpPost]
-        [DisplayName("Delete")]
+        [HttpPost("Delete")]
         public async Task<IActionResult> ConfirmDelete(int Id)
         {
             if (Id == 0)
@@ -147,7 +146,7 @@ namespace Task1.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("Edit/{Id}")]
         public async Task<IActionResult> Edit(int Id)
         {
             if (Id == 0)
@@ -173,7 +172,7 @@ namespace Task1.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("Edit")]
         public async Task<IActionResult> Edit(VehicleForm vehicle)
         {
 
@@ -241,7 +240,7 @@ namespace Task1.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("Create")]
         public async Task<IActionResult> Create()
         {
             var BrandList = (await _UOFInstance._brandsRepository.GetAll()).Select(brd => brd.Name);
@@ -257,7 +256,7 @@ namespace Task1.Controllers
             return View(result);
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create(VehicleCreateForm model)
         {
             if (ModelState.IsValid)
@@ -338,7 +337,7 @@ namespace Task1.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet("Details/{Id}")]
         public async Task<IActionResult> GetVehicles(int id)
         {
             try
@@ -358,19 +357,27 @@ namespace Task1.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Filter(string category, string Brand, string colours, int Rating, int MinPrice, int MaxPrice, int PageSize, int PageNumber, string SearchTerm, string SortColumn, String SortDirection)
+        [HttpGet("Filter")]
+        public async Task<IActionResult> Filter(
+                string? category,
+                string? Brand,
+                string? colours,
+                int? Rating,
+                int? MinPrice,
+                int? MaxPrice,
+                int PageSize = 10,
+                int PageNumber = 1,
+                string? SearchTerm = "",
+                string? SortColumn = "",
+                string? SortDirection = "")
         {
-            Console.WriteLine(category);
-            category = category ?? "";
-            Console.WriteLine(Brand);
-            Console.WriteLine(colours);
-            Console.WriteLine(Rating);
-            Console.WriteLine(PageSize);
-            Console.WriteLine(PageNumber);
+
+            Console.WriteLine("valuess are ");
+            Console.WriteLine(MinPrice);
+            Console.WriteLine(MaxPrice);
             try
             {
-                var result = await _UOFInstance._vehicleRepository.GetAll(PageSize, PageNumber, SearchTerm ?? "", SortColumn ?? "Name", SortDirection ?? "ASC", category ?? "", Brand ?? "", MinPrice, MaxPrice, "", colours ?? "", Rating);
+                var result = await _UOFInstance._vehicleRepository.GetAll(PageSize, PageNumber, SearchTerm ?? "", SortColumn ?? "Name", SortDirection ?? "ASC", category ?? "", Brand ?? "", MinPrice ?? 200000, MaxPrice ?? 2000000000, "", colours ?? "", Rating ?? 5);
                 var categoryList = await _UOFInstance._categoriesRepository.GetAll();
                 var BrandsList = await _UOFInstance._brandsRepository.GetAll();
                 var ColoursList = await _UOFInstance._coloursRepository.GetAll();
