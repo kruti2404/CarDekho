@@ -371,10 +371,11 @@ namespace Task1.Controllers
                 string? SortColumn = "",
                 string? SortDirection = "")
         {
-
+            Console.WriteLine("Detedct the change ");
             Console.WriteLine("valuess are ");
             Console.WriteLine(MinPrice);
             Console.WriteLine(MaxPrice);
+            Console.WriteLine("Should not be detected");
             try
             {
                 var result = await _UOFInstance._vehicleRepository.GetAll(PageSize, PageNumber, SearchTerm ?? "", SortColumn ?? "Name", SortDirection ?? "ASC", category ?? "", Brand ?? "", MinPrice ?? 200000, MaxPrice ?? 2000000000, "", colours ?? "", Rating ?? 5);
