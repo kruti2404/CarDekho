@@ -1,4 +1,4 @@
-# CarDekho
+# CarDekhoAPI
 
 This is a .NET 8.0 C# Web API project that integrates with SQL Server and implements secure JWT token-based authentication along with role-based authorization using ASP.NET Core Identity. The project follows a clean and maintainable architecture by applying the Repository and Unit of Work patterns, ensuring efficient data access and scalability.
 
